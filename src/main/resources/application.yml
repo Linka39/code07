@@ -1,0 +1,20 @@
+server:
+  port: 80
+  tomcat:
+    uri-encoding: UTF-8
+
+# 数据源配置
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/code07?serverTimezone=GMT&characterEncoding=utf8
+    username: root
+    password: 123456
+  #    password: XXX
+  jpa:
+    hibernate:
+      ddl-auto: update  #自动更新表
+    show-sql: true
+  thymeleaf:
+    cache: false
