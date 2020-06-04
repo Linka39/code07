@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <!--引入layui-->
+    <link rel="stylesheet" href="/static/layui/css/layui.css" />
+    <link rel="stylesheet" href="/static/css/css.css" />
+</head>
+<body>
+    <div class="w1170" style="padding-bottom: 10px;overflow: visible">
+        <ul class="layui-nav" lay-filter="">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item"><a href="/toVipPage">VIP购买</a></li>
+            <li class="layui-nav-item"><a href="http://blog.java1234.com/blog/articles/427.html" target="_blank">领取100积分</a></li>
+            <li class="layui-nav-item"><a href="http://blog.java1234.com/blog/articles/425.html" target="_blank">领取本站源码</a></li>
+            <li class="layui-nav-item"><a href="http://blog.java1234.com/blog/articles/428.html" target="_blank">获取本站项目商业授权</a></li>
+            <li class="layui-nav-item"><a href="http://www.java1234.com/javaxuexiluxiantu.html" target="_blank">Java学习路线图</a></li>
+            <li class="layui-nav-item" style="float: right;"><a onclick="showRegister()" style="padding-left: 8px;padding-right: 8px;" target="_blank">注册</a></li>
+            <li class="layui-nav-item" style="float: right;"><a onclick="showLogin()" style="padding-left: 8px;padding-right: 8px;" target="_blank">登录</a></li>
+        </ul>
+    </div>
+    <div class="w1170">
+        <div class="pLeft">
+            <div class="data_list">
+                <div class="data_list_title">
+                    <i class="layui-icon layui-icon-search" style="color: black"></i>
+                    <span class="head">条件检索</span>
+                </div>
+                <div class="data_search">
+                    <div>
+                        <table>
+                            <tr>
+                                <td width="80px" style="padding-top: 0px;padding-bottom: 28px;"><font class="stitle">资源类别：</font></td>
+                                <td>
+                                    <ul>
+                                        <li><a href="/"><span id="t_0">全部</span></a></li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=20" title="Java技术">
+                                                <span id="t_20">Java技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=21" title="数据库技术">
+                                                <span id="t_21">数据库技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=22" title="Web前端技术">
+                                                <span id="t_22">Web前端技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=23" title="J2EE技术">
+                                                <span id="t_23">J2EE技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=24" title="分布式微服技术">
+                                                <span id="t_24">分布式微服技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=25" title="移动APP开发技术">
+                                                <span id="t_25">移动APP开发技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=26" title="微信小程序开发">
+                                                <span id="t_26">微信小程序开发</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=27" title="服务器技术">
+                                                <span id="t_27">服务器技术</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=34" title="Java架构">
+                                                <span id="t_34">Java架构</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=28" title="人工智能">
+                                                <span id="t_28">人工智能</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=29" title="数据挖掘">
+                                                <span id="t_29">数据挖掘</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=30" title="大数据云计算">
+                                                <span id="t_30">大数据云计算</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=31" title="区块链">
+                                                <span id="t_31">区块链</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=32" title="机器学习">
+                                                <span id="t_32">机器学习</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=33" title="算法">
+                                                <span id="t_33">算法</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=36" title="软件测试">
+                                                <span id="t_36">软件测试</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/article/list/1?typeId=35" title="其他">
+                                                <span id="t_35">其他</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr style="border-top: dashed 1px #e6e6e6;height: 60px;">
+                                <td width="80px" style="padding-top: 0px;"><font class="stitle">关键词：</font></td>
+                                <td>
+                                    <form action="/article/search" onsubmit="return submitData()">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md10">
+                                                <input type="text" id="q" name="q" autocomplete="off" class="layui-input" style="height: 30px" />
+                                            </div>
+                                            <div class="layui-col-md2">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="layui-btn layui-btn-radius layui-btn-sm" value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;搜索&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; " />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="data_list">
+                <div class="data_list_title">
+                    <i class="layui-icon layui-icon-template-1"></i>
+                    <span class="head">资源列表</span>
+                </div>
+                <div class="layui-form">
+                    <table class="layui-table" lay-skin="line">
+                        <colgroup>
+                            <col />
+                            <col width="100" />
+                            <col width="80" />
+                            <col width="120" />
+                            <col width="80" />
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>资源名称</th>
+                            <th>查看次数</th>
+                            <th>上传者</th>
+                            <th>上传日期</th>
+                            <th>积分</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><a target="_blank" href="/article/602" title="gson-2.X.jar">gson-2.X.jar</a></td>
+                            <td>160 次</td>
+                            <td>erniu1984</td>
+                            <td>2018-09-27</td>
+                            <td>1</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div align="center"><div class='layui-box layui-laypage layui-laypage-default' id='layui-laypage-1' ><a href='/article/list/1'>首页</a><a href='javascript:;' class='layui-laypage-prev layui-disabled'>上一页</a><span class='layui-laypage-curr'><em class='layui-laypage-em'></em><em>1</em></span><a href='/article/list/2'>2</a><a href='/article/list/3'>3</a><a href='/article/list/2' class='layui-laypage-next'>下一页</a><a href='/article/list/23'>尾页</a></div></div>
+            </div>
+        </div>
+        <div class="pRight">
+            <div class="data_list">
+                <div class="data_list_title">
+                    <i class="layui-icon layui-icon-fire"></i>
+                    <span class="head">热门资源</span>
+                </div>
+                <div class="datas">
+                    <ul>
+                        <li>
+                            <a target="_blank" href="/article/522" title="微信小程序实战入门 内含完整实例解析 PDF 下载">微信小程序实战入门 内含完整实例解析 PD</a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/article/520" title="黑马 宜立方商城 视频教程 下载">黑马 宜立方商城 视频教程 下载</a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/article/518" title="SpringCloud实战项目 视频教程  下载">SpringCloud实战项目 视频教程 </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/article/508" title="企业大数据处理：Spark、Druid、Flume与Kafka应用实践 PDF 下载">企业大数据处理：Spark、Druid、F</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w1170">
+        <div class="data_list">
+            <div class="data_list_title">
+                <img src="/static/images/link_icon.png" />
+                <span class="head">友情链接</span>
+            </div>
+            <div class="data_link">
+                <ul>
+                    <li>
+                        <a target="_blank" href="http://www.java1234.com" title="Java1234">
+                            <span>Java1234</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="http://blog.java1234.com" title="Java1234博客">
+                            <span>Java1234博客</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="http://www.aiwujiwu.top" title="Java源码资源分享网">
+                            <span>Java源码资源分享网</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="w1170" style="padding-top: 40px">
+        <div class="sInfo">
+            Powered by <a href="http://www.java1234.com" target="_blank">Linka39</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/toDeclarePage">免责申明</a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;<a target="_blank" style="color: red" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1002222344&amp;site=qq&amp;menu=yes">侵权举报</a>
+        </div>
+        <div class="foot" align="center">Copyright © 2019-2020 本站点是练习演示站点，非盈利，所有信息采集自互联网，并附有转载地址</div>
+    </div>
+</body>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script>
+    /*<![CDATA[*/
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+    /*]]>*/
+</script>
+</html>
