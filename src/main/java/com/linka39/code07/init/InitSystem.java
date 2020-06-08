@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 初始化加载数据
@@ -21,7 +23,7 @@ import java.util.List;
 public class InitSystem implements ServletContextListener, ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-
+    public static Map<Integer,ArcType> arcTypeMap = new HashMap<Integer,ArcType>();
     /**
      * 加载数据到application缓存中
      * @param application
@@ -29,7 +31,11 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
     public void loadData(ServletContext application){
         //通过Service注解的名字来获取Service
         ArcTypeService arcTypeService = (ArcTypeService) applicationContext.getBean("arcTypeService");
+        //在上下文启动时初始化一个系统变量
         List<ArcType> allArcTypeList = arcTypeService.listAll(Sort.Direction.ASC,"sort");
+        for(ArcType arcType:allArcTypeList){
+            arcTypeMap.put(arcType.getId(),arcType);
+        }
         application.setAttribute("allArcTypeList",allArcTypeList);
     }
     @Override

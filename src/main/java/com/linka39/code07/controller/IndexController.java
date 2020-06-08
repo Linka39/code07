@@ -16,7 +16,7 @@ import java.util.List;
  * 首页url控制层
  */
 @Controller
-public class IndexContoller {
+public class IndexController {
 
     @Autowired
     private ArticleService articleService;
