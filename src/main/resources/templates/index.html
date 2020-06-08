@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
@@ -35,90 +35,9 @@
                                 <td>
                                     <ul>
                                         <li><a href="/"><span id="t_0">全部</span></a></li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=20" title="Java技术">
-                                                <span id="t_20">Java技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=21" title="数据库技术">
-                                                <span id="t_21">数据库技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=22" title="Web前端技术">
-                                                <span id="t_22">Web前端技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=23" title="J2EE技术">
-                                                <span id="t_23">J2EE技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=24" title="分布式微服技术">
-                                                <span id="t_24">分布式微服技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=25" title="移动APP开发技术">
-                                                <span id="t_25">移动APP开发技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=26" title="微信小程序开发">
-                                                <span id="t_26">微信小程序开发</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=27" title="服务器技术">
-                                                <span id="t_27">服务器技术</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=34" title="Java架构">
-                                                <span id="t_34">Java架构</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=28" title="人工智能">
-                                                <span id="t_28">人工智能</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=29" title="数据挖掘">
-                                                <span id="t_29">数据挖掘</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=30" title="大数据云计算">
-                                                <span id="t_30">大数据云计算</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=31" title="区块链">
-                                                <span id="t_31">区块链</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=32" title="机器学习">
-                                                <span id="t_32">机器学习</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=33" title="算法">
-                                                <span id="t_33">算法</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=36" title="软件测试">
-                                                <span id="t_36">软件测试</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/article/list/1?typeId=35" title="其他">
-                                                <span id="t_35">其他</span>
-                                            </a>
+                                        <li th:each="arcType:${application.allArcTypeList}">
+                                            <a th:href="'/article/list/1?typeId='+${arcType.id}" th:title="${arcType.name}">
+                                                <span th:id="'t_'+${arcType.id}" th:text="${arcType.name}"></span></a>
                                         </li>
                                     </ul>
                                 </td>
