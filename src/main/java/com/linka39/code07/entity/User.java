@@ -35,7 +35,7 @@ public class User {
     private Integer points=0;   //积分，新创建默认为0
     private Boolean isVip=false;    //是否为Vip
     private boolean isOff=false;    //是否被封禁
-    private String rleName="会员";    //角色名称，会员 管理员两种，默认会员
+    private String roleName="会员";    //角色名称，会员 管理员两种，默认会员
     private Date registerDate;  //用户注册日期
 
     public Integer getId() {
@@ -102,12 +102,12 @@ public class User {
         isOff = off;
     }
 
-    public String getRleName() {
-        return rleName;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRleName(String rleName) {
-        this.rleName = rleName;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
     @JsonSerialize(using = CustomDateSerializer.class)
     public Date getRegisterDate() {

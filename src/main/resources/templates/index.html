@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>首页</title>
+    <title th:text="${title}+'-linka39'"></title>
     <!--引入layui-->
     <link rel="stylesheet" href="/static/layui/css/layui.css" />
     <link rel="stylesheet" href="/static/css/css.css" />
@@ -92,17 +92,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td><a target="_blank" href="/article/602" title="gson-2.X.jar">gson-2.X.jar</a></td>
-                            <td>160 次</td>
-                            <td>erniu1984</td>
-                            <td>2018-09-27</td>
-                            <td>1</td>
+                        <tr th:each="article:${articleList}">
+                            <!--使用thymleaf字符串截取-->
+                            <td><a target="_blank" th:href="'/article/'+${article.id}" th:title="${article.name}" th:text="${#strings.length(article.name)>30} ? ${#strings.substring(article.name,0,31)}:${article.name}"></a></td>
+                            <td th:text="${article.view}+' 次'"></td>
+                            <td th:text="${article.user.userName}"></td>
+                            <td th:text="${#dates.format(article.publishDate,'yyyy-MM-dd')}"></td>
+                            <td th:text="${article.points}"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-                <div align="center"><div class='layui-box layui-laypage layui-laypage-default' id='layui-laypage-1' ><a href='/article/list/1'>首页</a><a href='javascript:;' class='layui-laypage-prev layui-disabled'>上一页</a><span class='layui-laypage-curr'><em class='layui-laypage-em'></em><em>1</em></span><a href='/article/list/2'>2</a><a href='/article/list/3'>3</a><a href='/article/list/2' class='layui-laypage-next'>下一页</a><a href='/article/list/23'>尾页</a></div></div>
+                <div align="center" th:utext="${pageCode}"></div>
             </div>
         </div>
         <div class="pRight">
