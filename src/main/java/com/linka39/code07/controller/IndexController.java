@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import sun.java2d.pipe.AATileGenerator;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -26,7 +27,9 @@ public class IndexController {
      * @return
      */
     @RequestMapping("/")
-    public ModelAndView root(){
+    public ModelAndView root(HttpServletRequest request){
+        //通过session来获取资源类型
+        request.getSession().setAttribute("tMenu","t_0");
         Article s_article = new Article();
         s_article.setState(2); //设置选取审核通过的帖子
         List<Article> indexArticleList = articleService.list(s_article,1,20, Sort.Direction.DESC,"publishDate");

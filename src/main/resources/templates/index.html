@@ -168,10 +168,13 @@
 </body>
 <script src="/static/layui/layui.js"></script>
 <script src="/static/js/jquery.js"></script>
-<script>
+<!--thymleaf中取值要加 th:inline="javascript"-->
+<script th:inline="javascript">
     /*<![CDATA[*/
     layui.use('element', function(){
         var element = layui.element;
+        var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
+        $("#"+tMenu).css("color","red");
     });
     /*]]>*/
 </script>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -30,7 +31,8 @@ public class ArticleController {
      * @return
      */
     @RequestMapping("/list/{id}")
-    public ModelAndView list(@RequestParam(value = "typeId",required = false)Integer typeId, @PathVariable(value = "id",required = false)Integer page){
+    public ModelAndView list(@RequestParam(value = "typeId",required = false)Integer typeId, @PathVariable(value = "id",required = false)Integer page,
+                             HttpServletRequest request){
         ModelAndView mav = new ModelAndView();
         Article s_article = new Article();
         s_article.setState(2); //设置选取审核通过的帖子
@@ -40,6 +42,7 @@ public class ArticleController {
             ArcType arcType= InitSystem.arcTypeMap.get(typeId);
             s_article.setArcType(arcType);
             mav.addObject("title",arcType.getName()+"-第"+page+"页");
+            request.getSession().setAttribute("tMenu","t_"+typeId);
         }
 
         List<Article> indexArticleList = articleService.list(s_article,page,20, Sort.Direction.DESC,"publishDate");
@@ -51,6 +54,7 @@ public class ArticleController {
         if(typeId!=null){
             param.append("?typeId="+typeId);
         }
+        //扩展实现分页展示资源类型类
         mav.addObject("pageCode", PageUtil.genPagination("/article/list",total,page,20,param.toString()));
         mav.setViewName("index");
         return mav;
