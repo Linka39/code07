@@ -41,6 +41,9 @@ public class ArticleServiceImpl implements ArticleService {
                         //进行sql表达式编辑
                         predicate.getExpressions().add(cb.equal(root.get("state"),s_article.getState()));
                     }
+                    if(s_article.isHot()){
+                        predicate.getExpressions().add(cb.equal(root.get("isHot"),true));
+                    }
                     if(s_article.getArcType()!=null && s_article.getArcType().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("arcType").get("id"),s_article.getArcType().getId()));
                     }
@@ -61,6 +64,9 @@ public class ArticleServiceImpl implements ArticleService {
                     if(article.getState()!=null){
                         //进行sql表达式编辑
                         predicate.getExpressions().add(cb.equal(root.get("state"),article.getState()));
+                    }
+                    if(article.isHot()){
+                        predicate.getExpressions().add(cb.equal(root.get("isHot"),true));
                     }
                     if(article.getArcType()!=null && article.getArcType().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("arcType").get("id"),article.getArcType().getId()));

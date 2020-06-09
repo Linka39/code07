@@ -104,17 +104,10 @@
                 </div>
                 <div class="datas">
                     <ul>
-                        <li>
-                            <a target="_blank" href="/article/522" title="微信小程序实战入门 内含完整实例解析 PDF 下载">微信小程序实战入门 内含完整实例解析 PD</a>
-                        </li>
-                        <li>
-                            <a target="_blank" href="/article/520" title="黑马 宜立方商城 视频教程 下载">黑马 宜立方商城 视频教程 下载</a>
-                        </li>
-                        <li>
-                            <a target="_blank" href="/article/518" title="SpringCloud实战项目 视频教程  下载">SpringCloud实战项目 视频教程 </a>
-                        </li>
-                        <li>
-                            <a target="_blank" href="/article/508" title="企业大数据处理：Spark、Druid、Flume与Kafka应用实践 PDF 下载">企业大数据处理：Spark、Druid、F</a>
+                        <li th:each="hotArticle,hotArticleStat:${hotArticleList}">
+                            <span class="r" th:text="${hotArticleStat.index+1}"></span>-
+                            <a target="_blank" th:href="'/article/'+${hotArticle.id}" th:title="${hotArticle.name}" th:text="${#strings.length(hotArticle.name)>20}?${#strings.substring(hotArticle.name,0,21)}:${hotArticle.name}">
+                            </a>
                         </li>
                     </ul>
                 </div>

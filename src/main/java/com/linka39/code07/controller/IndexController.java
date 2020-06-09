@@ -34,12 +34,16 @@ public class IndexController {
         s_article.setState(2); //设置选取审核通过的帖子
         List<Article> indexArticleList = articleService.list(s_article,1,20, Sort.Direction.DESC,"publishDate");
         Long total=articleService.getTotal(s_article);
+
+        s_article.setHot(true);//设置选取热门的帖子
+        List<Article> indexHotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
         ModelAndView mav = new ModelAndView();
         //mav.setViewName 默认的引擎就为tyhmleaf
         mav.addObject("title","首页");
         mav.addObject("pageCode", PageUtil.genPagination("/article/list",total,1,20,""));
 
         mav.addObject("articleList",indexArticleList);
+        mav.addObject("hotArticleList",indexHotArticleList);
         mav.setViewName("index");
         return mav;
     }

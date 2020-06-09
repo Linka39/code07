@@ -45,11 +45,14 @@ public class ArticleController {
             request.getSession().setAttribute("tMenu","t_"+typeId);
         }
 
-        List<Article> indexArticleList = articleService.list(s_article,page,20, Sort.Direction.DESC,"publishDate");
+        List<Article> articleList = articleService.list(s_article,page,20, Sort.Direction.DESC,"publishDate");
         Long total=articleService.getTotal(s_article);
+        s_article.setHot(true);//根据前面设置的类别来显示热门数据
+        List<Article> hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
         //mav.setViewName 默认的引擎就为tyhmleaf
         mav.addObject("title","第"+page+"页");
-        mav.addObject("articleList",indexArticleList);
+        mav.addObject("articleList",articleList);
+        mav.addObject("hotArticleList",hotArticleList);
         StringBuffer param = new StringBuffer();
         if(typeId!=null){
             param.append("?typeId="+typeId);
