@@ -1,10 +1,10 @@
 package com.linka39.code07.service;
 
-import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.Article;
 import org.springframework.data.domain.Sort.Direction;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 资源Service接口
@@ -23,5 +23,12 @@ public interface ArticleService {
      * @return
      */
     public Long getTotal(Article article);
+
+    /**
+     * 根据id获取内容
+     * @param id
+     * @return
+     */
+    public Optional<Article> get(Integer id);
 }
 

@@ -1,10 +1,7 @@
 package com.linka39.code07.service.impl;
 
-import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.Article;
-import com.linka39.code07.repository.ArcTypeRepository;
 import com.linka39.code07.repository.ArticleRepository;
-import com.linka39.code07.service.ArcTypeService;
 import com.linka39.code07.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 资源Service实现类
@@ -76,5 +74,10 @@ public class ArticleServiceImpl implements ArticleService {
             }
         });
         return count;
+    }
+
+    @Override
+    public Optional<Article> get(Integer id) {
+        return articleRepository.findById(id);
     }
 }

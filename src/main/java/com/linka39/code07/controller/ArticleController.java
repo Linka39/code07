@@ -62,4 +62,26 @@ public class ArticleController {
         mav.setViewName("index");
         return mav;
     }
+
+    /**
+     * 根据id查询帖子详情信息
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/{id}")
+    public ModelAndView view(@PathVariable(value = "id")Integer id)throws Exception{
+        ModelAndView mav = new ModelAndView();
+        //用get()将optional类转换为实体类
+        Article article=articleService.get(id).get();
+        Article s_article = new Article();
+        s_article.setHot(true);
+        s_article.setArcType(article.getArcType());//获取同资源类型
+        List<Article> hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
+        mav.addObject("hotArticleList",hotArticleList);
+        mav.addObject("article",article);
+        mav.addObject("title",article.getName());
+        mav.setViewName("article");
+        return mav;
+    }
 }
