@@ -1,7 +1,9 @@
 package com.linka39.code07.init;
 
 import com.linka39.code07.entity.ArcType;
+import com.linka39.code07.entity.Link;
 import com.linka39.code07.service.ArcTypeService;
+import com.linka39.code07.service.LinkService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,12 +33,15 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
     public void loadData(ServletContext application){
         //通过Service注解的名字来获取Service
         ArcTypeService arcTypeService = (ArcTypeService) applicationContext.getBean("arcTypeService");
+        LinkService linkService = (LinkService) applicationContext.getBean("linkService");
         //在上下文启动时初始化一个系统变量
         List<ArcType> allArcTypeList = arcTypeService.listAll(Sort.Direction.ASC,"sort");
+        List<Link> allLinkList = linkService.listAll(Sort.Direction.ASC,"sort");
         for(ArcType arcType:allArcTypeList){
             arcTypeMap.put(arcType.getId(),arcType);
         }
         application.setAttribute("allArcTypeList",allArcTypeList);
+        application.setAttribute("allLinkList",allLinkList);
     }
     @Override
     public void contextInitialized(ServletContextEvent sce) {
