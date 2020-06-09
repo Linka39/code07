@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="/static/layui/css/layui.css" />
     <link rel="stylesheet" href="/static/css/css.css" />
 </head>
-<body>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/common.js"></script>
+<!--jquery中 $(function(){})是等文档加载完执行，而此时图片资源不一定能加载完。onload是资源加载完-->
+<body onload="ResizeImages()">
     <div class="w1170" style="padding-bottom: 10px;overflow: visible" th:include="/common/head::#h">
     </div>
     <div class="w1170">
@@ -106,7 +110,7 @@
                     <ul>
                         <li th:each="hotArticle,hotArticleStat:${hotArticleList}">
                             <span class="r" th:text="${hotArticleStat.index+1}"></span>-
-                            <a target="_blank" th:href="'/article/'+${hotArticle.id}" th:title="${hotArticle.name}" th:text="${#strings.length(hotArticle.name)>20}?${#strings.substring(hotArticle.name,0,21)}:${hotArticle.name}">
+                            <a target="_blank" th:href="'/article/'+${hotArticle.id}" th:title="${hotArticle.name}" th:text="${#strings.length(hotArticle.name)>17}?${#strings.substring(hotArticle.name,0,18)}:${hotArticle.name}">
                             </a>
                         </li>
                     </ul>
@@ -119,8 +123,6 @@
     <div class="w1170" style="padding-top: 40px" th:include="common/foot::#f">
     </div>
 </body>
-<script src="/static/layui/layui.js"></script>
-<script src="/static/js/jquery.js"></script>
 <!--thymleaf中取值要加 th:inline="javascript"-->
 <script th:inline="javascript">
     /*<![CDATA[*/
