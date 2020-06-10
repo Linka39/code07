@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
- * 资源类型 Respository 接口
+ * 用户 Respository 接口
  */
 public interface LinkRepository extends JpaRepository<Link,Integer>, JpaSpecificationExecutor<Link> {
 }

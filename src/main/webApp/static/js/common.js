@@ -37,3 +37,7 @@ function showRegister() {
         content: '/register.html' //iframe的url
     });
 }
+
+function reloadPage() {
+    window.location.reload();
+}

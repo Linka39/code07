@@ -83,14 +83,15 @@
         $("#sbtn").attr("diabled",true);
 
         $.post("/user/register",
-            {userName:$("#userName").val().trim(),
+            {
+                userName:$("#userName").val().trim(),
                 password:$("#password").val().trim(),
                 email:$("#email").val().trim()},
             function(result){
             layer.close(index);//关闭弹窗
             $("#sbtn").prop("disabled",false);
             if(result.success){
-                alert("恭喜您，注册成功！");
+                layer.alert("恭喜您，注册成功！");
                 parent.reloadPage();
             }else{
                 $("#errorInfo").text(result.errorInfo);
