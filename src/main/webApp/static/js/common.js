@@ -26,3 +26,14 @@ function ResizeImages()
      }
    }
 }
+
+function showRegister() {
+    layer.open({
+        type: 2,
+        title: '用户注册页面',
+     /*   shadeClose: true, //点击阴影关闭弹窗
+        shade: 0.1,*/
+        area: ['480px', '600px'],
+        content: '/register.html' //iframe的url
+    });
+}

@@ -11,7 +11,7 @@
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/common.js"></script>
 <!--jquery中 $(function(){})是等文档加载完执行，而此时图片资源不一定能加载完。onload是资源加载完-->
-<body onload="ResizeImages()">
+<body>
     <div class="w1170" style="padding-bottom: 10px;overflow: visible" th:include="/common/head::#h">
     </div>
     <div class="w1170">
@@ -126,7 +126,8 @@
 <!--thymleaf中取值要加 th:inline="javascript"-->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    layui.use('element', function(){
+    //在此引入layui的模块
+    layui.use(['element','form','laypage'], function(){
         var element = layui.element;
         var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
         $("#"+tMenu).css("color","red");
