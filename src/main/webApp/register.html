@@ -9,11 +9,88 @@
         table tr td{
             padding: 10px;
         }
+        .error {
+            border: 1px solid #ff5d5d;
+        }
+        .pw-weak .pw-defule {
+            width: 0;
+        }
+
+        .pw-weak .pw-bar-on {
+            width: 124px;
+            background-color: #ff5d5d;
+        }
+
+        .pw-medium .pw-bar-on {
+            width: 247px;
+            background-color: #ffbf00;
+        }
+
+        .pw-strong .pw-bar-on {
+            width: 360px;
+            background-color: #00d9a3;
+        }
+        .pw-strength {
+            clear: both;
+            position: relative;
+            width: 360px;
+            height: 2px;
+            margin-top: 4px;
+        }
+        .pw-bar {
+            height: 2px;
+            width: 360px;
+            background: #ddd;
+        }
+
+        .pw-bar-on {
+            width: 0;
+            height: 2px;
+            position: absolute;
+            top: 0;
+            transition: width 1s ease-in;
+        /*    -moz-transition: width 1s ease-in;
+            -webkit-transition: width 1s ease-in;
+            -o-transition: width 1s ease-in;*/
+        }
+        .pw-separate {
+            position: absolute;
+            top: 0;
+        }
+
+        .pw-separate span {
+            display: inline-block;
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+        }
+
+        .pw-separate span:nth-child(1) {
+            left: 62px;
+        }
+
+        .pw-separate span:nth-child(2) {
+            left: 124px;
+        }
+
+        .pw-separate span:nth-child(3) {
+            left: 186px;
+        }
+
+        .pw-separate span:nth-child(4) {
+            left: 247px;
+        }
+
+        .pw-separate span:nth-child(5) {
+            left: 309px;
+        }
     </style>
 </head>
 <body>
     <div style="padding: 20px;">
         <form name="myForm" method="post">
+            <input type='text' name='name' style="display: none" onkeydown='if(event.keyCode==13){submitData();}' />
             <table>
                 <tr>
                     <td>用户名：</td>
@@ -24,12 +101,46 @@
                     <td><input type="password" id="password" name="password" class="layui-input"/></td>
                 </tr>
                 <tr>
+                    <td colspan="2">
+                        <div id='level' class="pw-strength">
+                            <div class="pw-bar"></div>
+                            <div class="pw-bar-on"></div>
+                            <div class="pw-separate">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td>确认密码：</td>
                     <td><input type="password" id="password2" name="password2" class="layui-input"/></td>
                 </tr>
                 <tr>
                     <td>邮箱：</td>
                     <td><input type="text" id="email" name="email" class="layui-input"/></td>
+                </tr>
+
+                <!--VID 5ee0b346e7b3ff69253970f6  KEY 8e7a9d4970dc4b18aecb9a4a7d039ca4-->
+
+                <tr>
+                    <td>验证：</td>
+                    <td>
+                        <div id="vaptchaContainer" style="width: 300px;height: 36px;">
+                            <!--vaptcha-container是用来引入VAPTCHA的容器，下面代码为预加载动画，仅供参考-->
+                            <div class="vaptcha-init-main">
+                                <div class="vaptcha-init-loading">
+                                    <a href="/" target="_blank">
+                                        <img src="https://r.vaptcha.net/public/img/vaptcha-loading.gif" />
+                                    </a>
+                                    <span class="vaptcha-text">Vaptcha启动中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td><button id="sbtn" class="layui-btn" onclick="submitData();return false">注册</button></td>
@@ -41,19 +152,71 @@
 </body>
 <script src="/static/js/jquery.js"></script>
 <script src="/static/layui/layui.js"></script>
+<script src="https://v.vaptcha.com/v3.js"></script>
 <script>
+    vaptcha({
+        vid: "5ee0b346e7b3ff69253970f6", // 验证单元id
+        type: "click", // 显示类型 点击式
+        scene: 0, // 场景值 默认0
+        container: "#vaptchaContainer", // 容器，可为Element 或者 selector
+        offline_server: "http://dd.linka39.top/", //离线模式服务端地址，若尚未配置离线模式，请填写任意地址即可。
+        //可选参数
+        //lang: 'zh-CN', // 语言 默认zh-CN,可选值zh-CN,en,zh-TW,jp
+        //https: true, // 使用https 默认 true
+        //style: 'dark' //按钮样式 默认dark，可选值 dark,light
+        //color: '#57ABFF' //按钮颜色 默认值#57ABFF
+    }).then(function (vaptchaObj) {
+        obj = vaptchaObj; //将VAPTCHA验证实例保存到局部变量中
+        vaptchaObj.render(); // 调用验证实例 vpObj 的 render 方法加载验证按钮
+        //获取token的方式一：
+        vaptchaObj.renderTokenInput('.login-form')//以form的方式提交数据时，使用此函数向表单添加token值
+        //关闭验证弹窗时触发
+        vaptchaObj.listen("close", function () {
+            //验证弹窗关闭触发
+        });
+    });
+    let mm = $('#password');
+    let mm2 = $('#password2');
+    let oLevel = $('#level');
+    let canBeSubmit = false; //是否能够提交注册
+    let canBeSubmit2 = false; //是否能够提交注册
+
+    // 密码强度 注册
+    mm.on('keyup', function(e) {
+        e.preventDefault();
+        strength(mm, oLevel, canBeSubmit, e);
+        emptyOrLengthError('password', 3, 10);
+    })
+
+    mm.on('blur', function(e) {
+        e.preventDefault();
+        emptyOrLengthError('password', 3, 10);
+    })
+    // 确认密码校验
+    mm2.on('keyup', function(e) {
+        e.preventDefault();
+        emptyOrLengthError2('password2')
+    })
+    mm2.on('blur', function(e) {
+        e.preventDefault();
+        emptyOrLengthError2('password2')
+    })
+
     layui.use(['form','layer'], function(){
         var form = layui.form;
         var layer = layui.layer;
     });
+
     function submitData() {
+        emptyOrLengthError('password', 3, 10);
+        emptyOrLengthError2('password2');
         if($("#userName").val().trim()==""){
             $("#errorInfo").text("请输入用户名！");
             return false;
         }
 
-        if($("#password").val().trim()==""){
-            $("#errorInfo").text("请输入密码！");
+        if(canBeSubmit==false){
+            $("#errorInfo").text("请按要求输入密码！");
             return false;
         }
 
@@ -67,13 +230,12 @@
             return false;
         }
 
-        if($("#password").val().trim().length<3){
-            $("#errorInfo").text("密码至少3位！");
+        if(canBeSubmit2==false){
+            $("#errorInfo").text("确认密码输入不对！");
             return false;
         }
-
-        if($("#password").val().trim()!=$("#password2").val().trim()){
-            $("#errorInfo").text("确认密码不对！");
+        if($("input[name=vaptcha_token]").val()==""){
+            $("#errorInfo").text("请进行人机验证！");
             return false;
         }
         $("#errorInfo").text("");
@@ -81,17 +243,17 @@
             {shade: [0.1,'#fff'] //0.1透明度的白色背景
         });
         $("#sbtn").attr("diabled",true);
-
         $.post("/user/register",
             {
                 userName:$("#userName").val().trim(),
                 password:$("#password").val().trim(),
+                vaptcha_token:$("input[name=vaptcha_token]").val(),
                 email:$("#email").val().trim()},
             function(result){
             layer.close(index);//关闭弹窗
             $("#sbtn").prop("disabled",false);
             if(result.success){
-                layer.alert("恭喜您，注册成功！");
+                alert("恭喜您，注册成功！");
                 parent.reloadPage();
             }else{
                 $("#errorInfo").text(result.errorInfo);
@@ -101,6 +263,103 @@
                 }
             }
         },"json");
+    }
+
+    /**
+     * 密码强度判断
+     * @param {String} id Dom的id
+     * @param {String} changeLevel 强度条的id
+     * @param {String} canSubmit 标识是否能够提交
+     * @param {*} e event
+     */
+    let strength = function(id, changeLevel, canSubmit, e) {
+        e = e || window.e;
+        var strongRegex = new RegExp(
+            '^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$',
+            'g'
+        )
+        var mediumRegex = new RegExp(
+            '^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$',
+            'g'
+        )
+        var enoughRegex = new RegExp('(?=.{6,}).*', 'g')
+        var allWordsRegex = new RegExp('[a-zA-Z]')
+        if (id.val().length >= 6) {
+            if (strongRegex.test(id.val())) {
+                //大写、小写、数字、特殊 包含4种 而且至少8位
+                changeLevel.removeClass('pw-medium')
+                changeLevel.removeClass('pw-weak')
+                changeLevel.addClass('pw-strong')
+            } else if (mediumRegex.test(id.val()) || allWordsRegex.test(id.val())) {
+                // 大写、小写、数字、特殊 包含2种或者3种、而且至少7位,或者全为字母 至少大于6位。
+                // this.passWordLevelEvent.emit({ strong: false, common: true, weak: false });
+                // this.resultEvent.emit(true);
+                changeLevel.removeClass('pw-strong')
+                changeLevel.removeClass('pw-weak')
+                changeLevel.addClass('pw-medium')
+            } else {
+                // this.passWordLevelEvent.emit({ strong: false, common: false, weak: true });
+                // this.resultEvent.emit(false);
+                changeLevel.removeClass('pw-strong')
+                changeLevel.removeClass('pw-medium')
+                changeLevel.addClass('pw-weak')
+            }
+        } else if (id.val().length > 0 && id.val().length < 6) {
+            changeLevel.removeClass('pw-strong')
+            changeLevel.removeClass('pw-medium')
+            changeLevel.addClass('pw-weak')
+            changeLevel = false
+            // step3.removeClass('error');
+            // oErrTip.html('');
+        } else {
+            changeLevel.removeClass('pw-strong')
+            changeLevel.removeClass('pw-medium')
+            changeLevel.removeClass('pw-weak')
+        }
+
+    }
+
+    /**
+     * 空值或长度错误
+     * @param {String} id Dom的id
+     * @param {String} submit 标识是否能够提交
+     * @param {Number} minLength  允许的最小长度
+     * @param {Number} maxLength 允许的最大长度
+     */
+    let emptyOrLengthError = function(id, minLength, maxLength) {
+        if (minLength && maxLength) {
+            if (
+                $('#' + id).val().trim() == '' ||
+                $('#' + id).val().length < minLength ||
+                $('#' + id).val().length > maxLength
+            ) {
+                canBeSubmit = false;
+                $('#' + id).addClass('error')
+            } else {
+                canBeSubmit = true;
+                $('#' + id).removeClass('error')
+            }
+        } else {
+            if ($('#' + id).val().trim() == '') {
+                canBeSubmit = false
+                $('#' + id).addClass('error')
+            } else {
+                canBeSubmit = true
+                $('#' + id).removeClass('error')
+            }
+        }
+    }
+    let emptyOrLengthError2 = function(id, submit) {
+            if (
+                $('#' + id).val().trim() == '' ||
+                $('#' + id).val()!= $("#password").val()
+            ) {
+                canBeSubmit2 = false;
+                $('#' + id).addClass('error')
+            } else {
+                canBeSubmit2 = true;
+                $('#' + id).removeClass('error')
+            }
     }
 </script>
 </html>
