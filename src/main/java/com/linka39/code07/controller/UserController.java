@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.VaptchaMessage;
-import com.linka39.code07.service.ArticleService;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.CryptographyUtil;
 import com.linka39.code07.util.PageUtil;
+import io.netty.util.internal.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -17,6 +17,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -24,6 +27,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +43,56 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 用户登陆
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/login")
+    @ResponseBody//要加入ResponseBody,或RestController，将返回的信息转换为json格式
+    //若实体类的参数 与ajax内请求中数据里""内的参数名相同，可直接用实体类代替
+    public Map<String,Object> login(@Valid User user, BindingResult bindingResult, String vaptcha_token, HttpServletRequest request) throws Exception{
+        Map<String,Object> map = new HashMap<> ();
+        if(StringUtils.isEmpty(user.getUserName().trim())){
+            map.put("success",false);
+            map.put("errorInfo","请输入用户名！");
+        }else if(StringUtils.isEmpty(user.getPassword().trim())){
+            map.put("success",false);
+            map.put("errorInfo","请输入密码！");
+        } else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
+            map.put("success", false);
+            map.put("errorInfo", "人机验证失败！");
+        }else{//登陆成功
+            Subject subject = SecurityUtils.getSubject();
+            //加密，将字段转换为token,subject相当于shiro的一个门，确认角色的身份
+            //两个参数,userName,passWord
+            UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(),CryptographyUtil.md5(user.getPassword(),CryptographyUtil.SALT));
+            try{
+                subject.login(token);
+                String userName = (String) SecurityUtils.getSubject().getPrincipal();
+                User currentUser = userService.findByUserName(userName);
+                if(currentUser.isOff()){
+                    map.put("success", false);
+                    map.put("errorInfo", "该用户已经被封禁，请联系管理员！");
+                    //不管try,catch返回值如何，finaly{}程序块的程序一定会执行
+                    //logout()，底层会清空session
+                    subject.logout();
+                }else{
+                    map.put("success",true);
+                    request.getSession().setAttribute("currentUser",currentUser);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+                map.put("success", false);
+                map.put("errorInfo", "用户名或密码错误！");
+            }
+
+        }
+        return map;
+    }
 
     /**
      * 用户注册

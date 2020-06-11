@@ -33,8 +33,17 @@ function showRegister() {
         title: '用户注册页面',
      /*   shadeClose: true, //点击阴影关闭弹窗
         shade: 0.1,*/
-        area: ['480px', '600px'],
+        area: ['480px', '550px'],
         content: '/register.html' //iframe的url
+    });
+}
+
+function showLogin() {
+    layer.open({
+        type: 2,
+        title: '用户登陆页面',
+        area: ['480px', '400px'],
+        content: '/login.html' //iframe的url
     });
 }
 

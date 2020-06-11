@@ -12,7 +12,7 @@ public class CryptographyUtil {
 	public final static String SALT="Linka39"; // 加密的盐
 
 	/**
-	 * Md5加密
+	 * Md5加密,全局静态方法
 	 * @param str
 	 * @param salt
 	 * @return
@@ -25,7 +25,7 @@ public class CryptographyUtil {
 	}
 
 	public static void main(String[] args) {
-		String password="123456";
+		String password="1111";
 		System.out.println("Md5加密："+CryptographyUtil.md5(password, SALT));
 		System.out.println("解密");
 	}
