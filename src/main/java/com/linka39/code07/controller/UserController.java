@@ -7,7 +7,7 @@ import com.linka39.code07.entity.VaptchaMessage;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.CryptographyUtil;
 import com.linka39.code07.util.PageUtil;
-import io.netty.util.internal.StringUtil;
+import com.linka39.code07.util.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -22,6 +22,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +31,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.util.StringUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -43,6 +47,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    //@Autowired//不能用Autowired装配，其是按类型来的
+    @Resource
+    private JavaMailSender mailSender;
 
     /**
      * 用户登陆
@@ -126,6 +134,74 @@ public class UserController {
         }
         return map;
     }
+    /**
+     * 验证码发送邮箱
+     * @param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/sendEmail")
+    @ResponseBody//要加入ResponseBody,或RestController，将返回的信息转换为json格式
+    public Map<String,Object> sendEmail(String email, HttpSession session)throws Exception{
+        Map<String,Object> map = new HashMap<>();
+        if(StringUtils.isEmpty(email)){
+            map.put("success", false);
+            map.put("errorInfo", "邮箱不存在！");
+            return map;
+        }
+        User user= userService.findByEmail(email);
+        if(user==null) {//select结果集为空
+            map.put("success", false);
+            map.put("errorInfo", "用户邮箱错误或不存在！");
+            return map;
+        }
+        //要先在邮箱里开启SMTP客户端服务
+        String mailCode = StringUtil.genSixRandomNum();
+        System.out.println(mailCode);
+        SimpleMailMessage message= new SimpleMailMessage();
+        message.setFrom("1203440758@qq.com");//设置发件人
+        message.setTo(email);
+        message.setSubject("linka39官网，找回密码");//主题
+        message.setText("验证码为："+mailCode);
+        mailSender.send(message);
+
+        //验证码，用户id需要存到session中,便于后面的验证
+        session.setAttribute("mailCode",mailCode);
+        session.setAttribute("userId",user.getId());
+        map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 邮件验证码判断，重置
+     * @param yzm
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/checkYzm")
+    @ResponseBody
+    public Map<String,Object> checkYzm(String yzm,HttpSession session)throws Exception{
+        Map<String,Object> map = new HashMap<>();
+        if(StringUtil.isEmpty(yzm)){
+            map.put("success", false);
+            map.put("errorInfo", "验证码不能为空！");
+            return map;
+        }
+        String mailCode = (String) session.getAttribute("mailCode");
+        Integer userId = (Integer) session.getAttribute("userId");
+        if(!yzm.equals(mailCode)){
+            map.put("success", false);
+            map.put("errorInfo", "验证码错误！");
+            return map;
+        }
+        User user = userService.findById(userId);
+        user.setPassword(CryptographyUtil.md5("111",CryptographyUtil.SALT));
+        userService.save(user);
+        map.put("success", true);
+        return map;
+    }
+
     /**
      * 人机验证结果判断
      * @param token

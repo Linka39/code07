@@ -50,3 +50,13 @@ function showLogin() {
 function reloadPage() {
     window.location.reload();
 }
+
+function showFindPassword(){
+    layer.closeAll('iframe');
+    layer.open({
+        type: 2,
+        title: '找回用户密码',
+        area: ['480px', '350px'],
+        content: '/findPassword.html' //iframe鐨剈rl
+    });
+}
