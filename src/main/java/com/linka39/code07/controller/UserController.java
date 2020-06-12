@@ -203,6 +203,29 @@ public class UserController {
     }
 
     /**
+     * 客户密码修改
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/modifyPassword")
+    @ResponseBody
+    public Map<String,Object> modifyPassword(String oldpassword,String password,HttpSession session)throws Exception{
+        User user =(User) session.getAttribute("currentUser");
+        Map<String,Object> map = new HashMap<>();
+        if(!user.getPassword().equals(CryptographyUtil.md5(oldpassword,CryptographyUtil.SALT))){
+            map.put("success", false);
+            map.put("errorInfo", "原密码错误！");
+            return map;
+        }
+        User oldUser=userService.findById(user.getId());
+        oldUser.setPassword(CryptographyUtil.md5(password,CryptographyUtil.SALT));
+        //按id执行响应的update语句
+        userService.save(oldUser);
+        map.put("success", true);
+        return map;
+    }
+
+    /**
      * 人机验证结果判断
      * @param token
      * @param ip

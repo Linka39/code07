@@ -57,6 +57,15 @@ function showFindPassword(){
         type: 2,
         title: '找回用户密码',
         area: ['480px', '350px'],
-        content: '/findPassword.html' //iframe鐨剈rl
+        content: '/findPassword.html' //iframe的url
+    });
+}
+
+function showModifyPassword(){
+    layer.open({
+        type: 2,
+        title: '修改用户密码',
+        area: ['480px', '350px'],
+        content: '/modifyPassword.html' //iframe的url
     });
 }

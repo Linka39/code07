@@ -10,8 +10,8 @@
          <li th:if="${session.currentUser!=null}" class="layui-nav-item" style="float: right;">
              <a href="/toUserCenterPage"><img class="layui-nav-img" th:src="${'/userImage/'+session.currentUser.imageName}" th:text="${session.currentUser.userName}"></img></a>
              <dl class="layui-nav-child">
-                 <dd><a onclick="showModifyPassword()">修改密码</a></dd>
-                 <dd><a onclick="showModifyUserImage()">修改头像</a></dd>
+                 <dd><a onclick="showModifyPassword()" class="a">修改密码</a></dd>
+                 <dd><a onclick="showModifyUserImage()" class="a">修改头像</a></dd>
                <!--  /logout 路径在shiro框架里自动配置了-->
                  <dd><a href="/logout">安全退出</a></dd>
              </dl>
