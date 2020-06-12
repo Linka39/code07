@@ -1,13 +1,16 @@
 package com.linka39.code07.controller;
 
+import ch.qos.logback.core.util.FileUtil;
 import com.google.gson.Gson;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.VaptchaMessage;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.CryptographyUtil;
+import com.linka39.code07.util.DateUtil;
 import com.linka39.code07.util.PageUtil;
 import com.linka39.code07.util.StringUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,6 +24,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.util.StringUtils;
 
@@ -36,6 +41,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -51,6 +57,9 @@ public class UserController {
     //@Autowired//不能用Autowired装配，其是按类型来的
     @Resource
     private JavaMailSender mailSender;
+
+    @Value("${userImageFilePath}")
+    private String userImageFilePath;
 
     /**
      * 用户登陆
@@ -222,6 +231,35 @@ public class UserController {
         //按id执行响应的update语句
         userService.save(oldUser);
         map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 实现图片上传
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/uploadImage")
+    @ResponseBody
+    public Map<String,Object> uploadImage(MultipartFile file, HttpSession session)throws Exception{
+        Map<String,Object> map = new HashMap<>();
+        if(!file.isEmpty()){
+            String fileName=file.getOriginalFilename();//获取原文件名
+            String suffixName= fileName.substring(fileName.lastIndexOf(".")); //获取后缀
+            String newFileName= DateUtil.getCurrentDateStr()+suffixName;    //新名字
+            FileUtils.copyInputStreamToFile(file.getInputStream(),new File(userImageFilePath+newFileName));//拷贝到新文件
+            map.put("code",0);
+            map.put("msg","上传成功");
+            Map<String,Object> map2=new HashMap<>();
+            map2.put("src","/userImage/"+newFileName);
+            map2.put("title",newFileName);
+            map.put("data",map2);
+
+            User user =(User) session.getAttribute("currentUser");
+            user.setImageName(newFileName);
+            userService.save(user);
+            session.setAttribute("currentUser",user);
+        }
         return map;
     }
 

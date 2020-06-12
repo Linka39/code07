@@ -69,3 +69,12 @@ function showModifyPassword(){
         content: '/modifyPassword.html' //iframe的url
     });
 }
+
+function showModifyUserImage(){
+    layer.open({
+        type: 2,
+        title: '修改用户头像',
+        area: ['480px', '350px'],
+        content: '/modifyUserImage.html' //iframe鐨剈rl
+    });
+}
