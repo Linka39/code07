@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(name = "t_article")
 public class Article {
     @Id //设为主键
-    @GeneratedValue//设置自动生成
+    @GeneratedValue //设置自动生成
     private Integer id;//编号
 
     @Column(length = 200)

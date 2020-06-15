@@ -30,5 +30,12 @@ public interface ArticleService {
      * @return
      */
     public Optional<Article> get(Integer id);
+
+    /**
+     * 保存当前资源
+     * @param article
+     * @return
+     */
+    public void save(Article article);
 }
 

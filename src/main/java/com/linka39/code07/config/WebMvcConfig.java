@@ -17,7 +17,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	//文件磁盘图片url 映射
 	//配置server虚拟路径，handler为前台访问的目录，locations为files相对应的本地路径
       //可以实现数据与项目间的分离
-	registry.addResourceHandler("/image/**").addResourceLocations("file:E:\\my_project\\code07\\Image\\");
+	registry.addResourceHandler("/image/**").addResourceLocations("file:E:\\my_project\\code07\\uploadImage\\");
 	registry.addResourceHandler("/userImage/**").addResourceLocations("file:E:\\my_project\\code07\\userImage\\");
   }
 

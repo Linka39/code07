@@ -31,7 +31,7 @@ public class IndexUserController {
         Long total = articleService.getTotal(s_article);
         ModelAndView mav = new ModelAndView();
         mav.addObject("title","用户中心页面");
-        mav.addObject("unUserfulCount",total);
+        session.setAttribute("unUserfulCount",total);
         mav.setViewName("user/userCenter");
         return mav;
     }

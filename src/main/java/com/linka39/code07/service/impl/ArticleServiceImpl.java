@@ -92,4 +92,9 @@ public class ArticleServiceImpl implements ArticleService {
     public Optional<Article> get(Integer id) {
         return articleRepository.findById(id);
     }
+
+    @Override
+    public void save(Article article) {
+        articleRepository.save(article);
+    }
 }
