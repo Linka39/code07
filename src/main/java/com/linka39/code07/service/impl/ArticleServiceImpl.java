@@ -45,6 +45,12 @@ public class ArticleServiceImpl implements ArticleService {
                     if(s_article.getArcType()!=null && s_article.getArcType().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("arcType").get("id"),s_article.getArcType().getId()));
                     }
+                    if(!s_article.isUseful()){
+                        predicate.getExpressions().add(cb.equal(root.get("isUseful"),false));
+                    }
+                    if(s_article.getUser()!=null && s_article.getUser().getId()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("user").get("id"),s_article.getUser().getId()));
+                    }
                 }
                 return predicate;
             }
@@ -68,6 +74,12 @@ public class ArticleServiceImpl implements ArticleService {
                     }
                     if(article.getArcType()!=null && article.getArcType().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("arcType").get("id"),article.getArcType().getId()));
+                    }
+                    if(!article.isUseful()){
+                        predicate.getExpressions().add(cb.equal(root.get("isUseful"),false));
+                    }
+                    if(article.getUser()!=null && article.getUser().getId()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("user").get("id"),article.getUser().getId()));
                     }
                 }
                 return predicate;

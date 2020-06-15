@@ -251,6 +251,7 @@ public class UserController {
             map.put("code",0);
             map.put("msg","上传成功");
             Map<String,Object> map2=new HashMap<>();
+            //layui指定上传格式，data为标签中对应的属性
             map2.put("src","/userImage/"+newFileName);
             map2.put("title",newFileName);
             map.put("data",map2);
