@@ -8,8 +8,10 @@ import com.linka39.code07.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +44,35 @@ public class ArticleUserController {
         mav.addObject("title","发布帖子页面");
         mav.setViewName("user/publishArticle");
         return mav;
+    }
+    /**
+     * 跳转到帖子管理页面
+     * @return
+     */
+    @RequestMapping("/toArticleManagePage")
+    public ModelAndView toArticleManagePage(){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("title","帖子管理页面");
+        mav.setViewName("user/articleManage");
+        return mav;
+    }
+
+    /**
+     * 根据条件分页查询帖子信息
+     * @return
+     */
+    @RequestMapping("/list")
+    @ResponseBody
+    public Map<String,Object> list(Article s_article,HttpSession session, @RequestParam(value="page",required = false)Integer page,@RequestParam(value="limit",required = false)Integer limit)throws Exception{
+        User user = (User) session.getAttribute("currentUser");
+        s_article.setUser(user);
+        Map<String,Object> map = new HashMap<>();
+        List<Article> articleList = articleService.list(s_article,page,limit, Sort.Direction.DESC,"publishDate");
+        Long count = articleService.getTotal(s_article);
+        map.put("code",0);
+        map.put("count",count);
+        map.put("data",articleList);
+        return map;
     }
 
     /**

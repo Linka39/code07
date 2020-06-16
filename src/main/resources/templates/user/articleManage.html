@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${title}+'linka39'"></title>
+	<link rel="stylesheet" href="/static/layui/css/layui.css" />
+	<link rel="stylesheet" href="/static/css/css.css" />
+</head>
+<body>
+<div class="w1170" th:include="common/head::#h" style="padding-bottom: 10px;overflow:visible;"></div>
+<div class="w1170">
+	<div style="float: left;width: 200px" th:include="common/menu::#m"/>
+	<div style="float: right;width: 960px" th:include="user/page/articleManagePage::#f"/>
+</div>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/common.js"></script>
+<script>
+	/*<![CDATA[*/
+	layui.use(['element','form','table'], function(){
+		//变量前不加声明的话，默认为全局变量
+		table = layui.table;
+		$ = layui.jquery; // 使用jquery
+		table.render({
+			elem: '#articleListTable'
+			,url:'/user/article/list'
+			,cols: [//坑，thymleaf模板上要严格按照格式分行控制
+						[
+					{type:'checkbox'}
+					,{field:'name', width:350, title: '资源名称',templet:formatName}
+					,{field:'arcType', width:100, title: '所属类别',templet:formatArcTypeName}
+					,{field:'points', width:60, title: '积分',align:'center'}
+					,{field:'publishDate', width:120, title: '发布日期', sort: true,align:'center'}
+					,{field:'state', width:100, title: '审核状态',align:'center',templet:formatState}
+					,{field:'action', width:150, title: '操作',align:'center',templet:formatAction}
+				]
+			]
+			,page: true
+		});
+	});
+
+function search(){
+	var s_name=$("#s_name").val();
+	var s_state=$("#s_state").val();
+	table.reload("articleListTable",{
+		page:{
+			curr:1
+		}//起始分页
+		,where:{
+			name:s_name,
+			state:s_state
+		}//条件数据自动封入实体类
+	});
+}
+
+function formatName(d){
+	if(d.state==2){
+		return "<a href='/article/"+d.id+"' target='_blank'>"+d.name+"</a>";
+	}else{
+		return d.name;
+	}
+}
+
+function formatArcTypeName(d){
+	if(d.arcType==null){
+		return "";
+	}else{
+		return d.arcType.name;
+	}
+}
+
+function formatState(d){
+	if(d.state==1){
+		return "未审核";
+	}else if(d.state==2){
+		return "<font color=blue>审核通过</font>";
+	}else if(d.state==3){
+		return "<a href='#' title='审核未通过原因："+d.reason+"''><font color=red>审核未通过</font></a><br/>";
+	}
+}
+
+
+function formatAction(d){
+	return "<button class='layui-btn layui-btn-normal layui-btn-xs' onclick='modifyArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>编辑</button><button class='layui-btn layui-btn-warm layui-btn-xs' onclick='deleteOne("+d.id+")'><i class='layui-icon layui-icon-delete' ></i>删除</button>";
+}
+
+	/*]]>*/
+</script>
+</body>
+</html>

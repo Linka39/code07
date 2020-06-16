@@ -35,6 +35,9 @@ public class ArticleServiceImpl implements ArticleService {
             public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if(s_article!=null){
+                    if(s_article.getName()!=null){
+                        predicate.getExpressions().add(cb.like(root.get("name"),"%"+s_article.getName().trim()+"%"));
+                    }
                     if(s_article.getState()!=null){
                         //进行sql表达式编辑
                         predicate.getExpressions().add(cb.equal(root.get("state"),s_article.getState()));
@@ -65,6 +68,9 @@ public class ArticleServiceImpl implements ArticleService {
             public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if(article!=null){
+                    if(article.getName()!=null){
+                        predicate.getExpressions().add(cb.like(root.get("name"),"%"+article.getName().trim()+"%"));
+                    }
                     if(article.getState()!=null){
                         //进行sql表达式编辑
                         predicate.getExpressions().add(cb.equal(root.get("state"),article.getState()));
