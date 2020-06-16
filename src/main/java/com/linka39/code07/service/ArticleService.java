@@ -36,5 +36,10 @@ public interface ArticleService {
      * @return
      */
     public void save(Article article);
+    /**
+     * 根据id删除资源
+     * @return
+     */
+    public void delete(Integer id);
 }
 

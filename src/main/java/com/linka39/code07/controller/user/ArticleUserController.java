@@ -156,4 +156,38 @@ public class ArticleUserController {
         }
         return map;
     }
+
+    /**
+     * 根据id删除一条
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/delete")
+    public Map<String,Object> delete(Integer id)throws Exception{
+        Map<String,Object> map = new HashMap<>();
+        articleService.delete(id);
+        //删除该帖子下的所有评论
+        //删除redis索引
+        map.put("success",true);
+        return map;
+    }
+    /**
+     * 多选删除
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/deleteSelected")
+    public Map<String,Object> delete(String ids)throws Exception{
+        String[] idStr = ids.split(",");
+        for(int i=0;i<idStr.length;++i){
+            articleService.delete(Integer.parseInt(idStr[i]));
+            //删除该帖子下的所有评论
+            //删除redis索引
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
 }

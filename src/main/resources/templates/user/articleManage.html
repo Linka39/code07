@@ -86,6 +86,54 @@ function formatAction(d){
 function modifyArticle(id) {
 	window.location.href="/user/article/toModifyArticlePage/"+id;
 }
+function deleteSelected() {
+	//获取复选框节点
+	var checkStatus = table.checkStatus('articleListTable');
+	if(checkStatus.data.length==0){
+		layer.msg("请选择要删除的数据！");
+		return;
+	}
+	var strIds=[];
+	var rows=checkStatus.data;
+	for(var i =0;i<checkStatus.data.length;++i){
+		strIds.push(rows[i].id);
+	}
+	var ids=strIds.join(",");
+	layer.confirm("您确定要删除这<font color=red>"+checkStatus.data.length+"</font>条记录吗？", {
+		title:"系统提示"
+		,btn: ['确定','取消'] //按钮
+	}, function(){
+		layer.closeAll('dialog');
+		$.post("/user/article/deleteSelected",{"ids":ids},function(result){
+			if(result.success){
+				layer.msg("删除成功！");
+				table.reload("articleListTable",{});
+			}else{
+				layer.msg("删除失败，请联系管理员！");
+			}
+		},"json");
+	}, function(){
+
+	});
+}
+function deleteOne(id) {
+	layer.confirm('您确定要删除这条记录吗？',{
+		title:"系统提示"
+		,btn:['删除','取消']
+	},function () {
+		layer.closeAll('dialog');
+		$.post("/user/article/delete",
+				{id:id},
+		function (result) {
+			if(result.success){
+				layer.msg("删除成功！");
+				table.reload("articleListTable",{});
+			}else{
+				layer.msg("删除失败，请联系管理员！");
+			}
+		})
+	})
+}
 
 	/*]]>*/
 </script>

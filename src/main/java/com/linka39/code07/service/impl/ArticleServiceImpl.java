@@ -102,4 +102,9 @@ public class ArticleServiceImpl implements ArticleService {
     public void save(Article article) {
         articleRepository.save(article);
     }
+
+    @Override
+    public void delete(Integer id) {
+        articleRepository.deleteById(id);
+    }
 }
