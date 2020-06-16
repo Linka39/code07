@@ -73,7 +73,7 @@ public class ArticleController {
     public ModelAndView view(@PathVariable(value = "id")Integer id)throws Exception{
         ModelAndView mav = new ModelAndView();
         //用get()将optional类转换为实体类
-        Article article=articleService.get(id).get();
+        Article article=articleService.get(id);
         Article s_article = new Article();
         s_article.setHot(true);
         s_article.setArcType(article.getArcType());//获取同资源类型

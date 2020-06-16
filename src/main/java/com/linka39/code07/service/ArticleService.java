@@ -4,7 +4,6 @@ import com.linka39.code07.entity.Article;
 import org.springframework.data.domain.Sort.Direction;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 资源Service接口
@@ -29,7 +28,7 @@ public interface ArticleService {
      * @param id
      * @return
      */
-    public Optional<Article> get(Integer id);
+    public Article get(Integer id);
 
     /**
      * 保存当前资源

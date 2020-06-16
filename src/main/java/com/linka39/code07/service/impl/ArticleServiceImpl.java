@@ -16,7 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 资源Service实现类
@@ -95,8 +94,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Optional<Article> get(Integer id) {
-        return articleRepository.findById(id);
+    public Article get(Integer id) {
+        return articleRepository.findById(id).get();
     }
 
     @Override

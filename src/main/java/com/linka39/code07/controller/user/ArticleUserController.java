@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -56,6 +57,18 @@ public class ArticleUserController {
         mav.setViewName("user/articleManage");
         return mav;
     }
+    /**
+     * 跳转到帖子修改
+     * @return
+     */
+    @RequestMapping("/toModifyArticlePage/{id}")
+    public ModelAndView toModifyArticlePage(@PathVariable("id")Integer id){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("article",articleService.get(id));//Optional类型要转为article类型
+        mav.addObject("title","帖子修改页面");
+        mav.setViewName("user/modifyArticle");
+        return mav;
+    }
 
     /**
      * 根据条件分页查询帖子信息
@@ -91,6 +104,32 @@ public class ArticleUserController {
         ModelAndView mav = new ModelAndView();
         articleService.save(article);
         mav.addObject("title","发布帖子成功页面");
+        mav.setViewName("user/publishArticleSuccess");
+        return mav;
+    }
+    /**
+     * 修改帖子
+     * @param article
+     * @return
+     */
+    @RequestMapping("/update")
+    public ModelAndView update(Article article){
+        Article oldArticle = articleService.get(article.getId());
+        oldArticle.setName(article.getName());
+        oldArticle.setArcType(article.getArcType());
+        oldArticle.setContent(article.getContent());
+        oldArticle.setDownload1(article.getDownload1());
+        oldArticle.setPassword(article.getPassword());
+        oldArticle.setPoints(article.getPoints());
+        if(oldArticle.getState()==3){//审核未通过时，点击修改状态改为1未审核
+            oldArticle.setState(1);
+        }
+        if(oldArticle.getState()==3){
+            //修改Lucene索引，redis缓存中删除这个索引
+        }
+        articleService.save(oldArticle);
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("title","修改帖子成功页面");
         mav.setViewName("user/publishArticleSuccess");
         return mav;
     }

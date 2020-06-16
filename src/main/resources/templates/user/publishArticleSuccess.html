@@ -14,9 +14,18 @@
     </div>
     <script src="/static/layui/layui.js"></script>
     <script src="/static/js/common.js"></script>
+    <script src="/static/js/jquery.js"></script>
     <script>
         /*<![CDATA[*/
         layui.use(['element','laypage','form'], function(){
+        });
+        var title ='[[${title}]]';
+        $(document).ready(function(){
+            if(title=="修改帖子成功页面"){
+                $("#context").text("修改成功！")
+            }else if(title=="发布帖子成功页面"){
+                $("#context").text("发布成功！")
+            }
         });
         /*]]>*/
 
