@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>添加或者修改资源类别</title>
+<title>添加或者修改友情链接</title>
 <link rel="stylesheet" href="/static/layui/css/layui.css"></link>
 <style type="text/css">
 
@@ -18,14 +18,12 @@
 	<form method="post">
 		<table>
 			<tr>
-				<td>资源类型名称：</td>
+				<td>友情链接名称：</td>
 				<td><input type="text" id="name" name="name" class="layui-input" style="width: 300px"/></td>
 			</tr>
 			<tr>
-				<td valign="top">资源类型描述：</td>
-				<td>
-					<textarea id="remark" name="remark" class="layui-textarea"></textarea>
-				</td>
+				<td>友情链接地址：</td>
+				<td><input type="text" id="url" name="url" class="layui-input" style="width: 300px"/></td>
 			</tr>
 			<tr>
 				<td>排列序号：</td>
@@ -39,17 +37,29 @@
 	</form>
 </div>
 <script src="/static/js/jquery.js"></script>
+<script src="/static/js/common.js"></script>
 <script type="text/javascript">
 
 	function submitData(){
 		var name=$("#name").val().trim();
-		var remark=$("#remark").val().trim();
+		var url=$("#url").val().trim();
 		var sort=$("#sort").val().trim();
 		if(name=="") {
-	　　　　     　　 $("#errorInfo").text("请输入资源类型名称！");
+	　　　　     　　 $("#errorInfo").text("请输入友情链接名称！");
 			  $("#name").focus();
 	　　　　　　      return false;
 	　　　}
+		if(url=="") {
+	　　　　     　　 $("#errorInfo").text("请输入友情链接地址！");
+			  $("#url").focus();
+	　　　　　　      return false;
+	　　　}
+		//如果用了没有定义的方法时会报405错误
+		if(!IsURL(url)){
+			 $("#errorInfo").text("友情链接地址格式不正确！");
+			  $("#url").focus();
+	　　　　　　      return false;
+		}
 		if(sort=="") {
 	　　　　     　　 $("#errorInfo").text("请输入排列序号！");
 			  $("#sort").focus();
@@ -62,9 +72,9 @@
 	　　  }
 	   var id=getQueryVariable("id");
 	   if(id){
-		   $.post("/admin/arcType/save",
-               {id:id,name:name,remark:remark,sort:sort},
-               function(result){
+		   $.post("/admin/link/save",
+				   {id:id,name:name,url:url,sort:sort},
+		   function(result){
 			  if(result.success){
 				  alert("修改成功！");
 				  parent.reloadPage();
@@ -73,9 +83,9 @@
 			  }
 		  },"json");
 	   }else{
-		   $.post("/admin/arcType/save",
-               {name:name,remark:remark,sort:sort},
-               function(result){
+		   $.post("/admin/link/save",
+				   {name:name,url:url,sort:sort},
+			   function(result){
 				  if(result.success){
 					  alert("添加成功！");
 					  parent.reloadPage();
@@ -85,9 +95,10 @@
 			  },"json");
 	   }
 	}
-	//通过链接获取id的工具类
+
+
+
 	function getQueryVariable(variable){
-		//window.location.search的变量为"?id=20"
 	       var query = window.location.search.substring(1);
 	       var vars = query.split("&");
 	       for (var i=0;i<vars.length;i++) {
@@ -100,16 +111,16 @@
 	$(function(){
 	　　
 		var id=getQueryVariable("id");
-
+		//如果有id的话，进行表格数据回填
 		if(id){
-			$.post("/admin/arcType/findById",
+			$.post("/admin/link/findById",
 					{id:id},
 					function(result){
 				  if(result.success){
-					  var arcType=result.arcType;
-					  $("#name").val(arcType.name);
-					  $("#remark").val(arcType.remark);
-					  $("#sort").val(arcType.sort);
+					  var link=result.link;
+					  $("#name").val(link.name);
+					  $("#url").val(link.url);
+					  $("#sort").val(link.sort);
 				  }else{
 					  alert("服务器加载有问题，请联系管理员！");
 				  }
