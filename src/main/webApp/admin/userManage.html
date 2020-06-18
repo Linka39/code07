@@ -80,7 +80,35 @@
 		    ]]
 		    ,page: true
 		  });
+	// 监听会员设置操作，switch过滤方法
+		form.on('switch(vipSwitch)', function(obj){
+			$.post("/admin/user/updateVipState",
+					//this与obj.elem是同一对象
+					{"id":this.name,"vip":obj.elem.checked},
+					function(result){
+				if(result.success){
+					layer.msg("执行成功！");
+					table.reload("userListTable",{});
+				}else{
+					layer.msg("执行失败，请联系管理员！");
+				}
+			},"json");
+		});
+			// 监听封禁设置操作，switch过滤方法
+			form.on('switch(offSwitch)', function(obj){
+				$.post("/admin/user/updateUserState",
+						//this与obj.elem是同一对象
+						{"id":this.name,"off":obj.elem.checked},
+						function(result){
+							if(result.success){
+								layer.msg("执行成功！");
+								table.reload("userListTable",{});
+							}else{
+								layer.msg("执行成功，请联系管理员！");
+							}
+						},"json");
 
+		});
 
 	});
 
@@ -102,6 +130,39 @@
 				userName:s_userName,
 				email:s_email
 			}//条件数据自动封入实体类
+		});
+	}
+
+	function addPoints(id){
+		layer.open({
+			type: 2,
+			title: '充值积分',
+			area: ['400px', '300px'],
+			content: '/admin/addPoints.html?id='+id //iframe的url
+		});
+	}
+
+	function resetPassword(id){
+		layer.confirm('您确定要对用户进行重置密码吗？', {
+			title:"系统提示"
+			,btn: ['确定','取消','test'] //按钮
+			,btn3: function(index, layero){
+				alert("test")//按钮【按钮三】的回调
+		}
+		}, function(){
+			layer.closeAll('dialog');
+			$.post("/admin/user/resetPassword",
+					{"id":id},
+			function(result){
+				if(result.success){
+					layer.msg("重置成功！");
+					table.reload("userListTable",{});
+				}else{
+					layer.msg("重置失败，请联系管理员！");
+				}
+			},"json");
+		}, function(){
+
 		});
 	}
 

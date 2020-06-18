@@ -2,6 +2,7 @@ package com.linka39.code07.controller.admin;
 import com.linka39.code07.entity.User;
 
 import com.linka39.code07.service.UserService;
+import com.linka39.code07.util.CryptographyUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -39,6 +40,71 @@ public class UserAdminController {
         map.put("code",0);
         map.put("count",count);
         map.put("data",userList);
+        return map;
+    }
+
+    /**
+     * 重置用户密码
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/resetPassword")
+    @RequiresPermissions(value = {"重置用户密码"})//设置权限
+    @ResponseBody
+    public Map<String,Object> resetPassword(Integer id)throws Exception{
+        User oldUser = userService.findById(id);
+        oldUser.setPassword(CryptographyUtil.md5("111",CryptographyUtil.SALT));
+        userService.save(oldUser);
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+    /**
+     * 用户积分充值
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/addPoints")
+    @RequiresPermissions(value = {"用户积分充值"})//设置权限
+    @ResponseBody
+    public Map<String,Object> addPoints(Integer id,Integer points)throws Exception{
+        User oldUser = userService.findById(id);
+        oldUser.setPoints(oldUser.getPoints()+points);
+        userService.save(oldUser);
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+    /**
+     * 修改用户VIP状态
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/updateVipState")
+    @RequiresPermissions(value = {"修改用户VIP状态"})//设置权限
+    @ResponseBody
+    public Map<String,Object> updateVipState(Integer id,Boolean vip)throws Exception{
+        User oldUser = userService.findById(id);
+        oldUser.setVip(vip);
+        userService.save(oldUser);
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+    /**
+     * 修改用户状态
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/updateUserState")
+    @RequiresPermissions(value = {"修改用户状态"})//设置权限
+    @ResponseBody
+    public Map<String,Object> updateUserState(Integer id,Boolean off)throws Exception{
+        User oldUser = userService.findById(id);
+        oldUser.setOff(off);
+        userService.save(oldUser);
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
         return map;
     }
 
