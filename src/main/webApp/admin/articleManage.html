@@ -96,8 +96,70 @@
 			  ]
 		    ,page: true
 		  });
+		// 监听热门设置操作，switch过滤方法
+		form.on('switch(hotSwitch)', function(obj){
+			$.post("/admin/article/updateHotState",
+					//this与obj.elem是同一对象
+					{"id":this.name,"hot":obj.elem.checked},
+					function(result){
+						if(result.success){
+							layer.msg("执行成功！");
+							table.reload("articleListTable",{});
+						}else{
+							layer.msg("执行失败，请联系管理员！");
+						}
+					},"json");
+		});
 	});
 
+	function deleteSelected() {
+		//获取复选框节点
+		var checkStatus = table.checkStatus('articleListTable');
+		if(checkStatus.data.length==0){
+			layer.msg("请选择要删除的数据！");
+			return;
+		}
+		var strIds=[];
+		var rows=checkStatus.data;
+		for(var i =0;i<checkStatus.data.length;++i){
+			strIds.push(rows[i].id);
+		}
+		var ids=strIds.join(",");
+		layer.confirm("您确定要删除这<font color=red>"+checkStatus.data.length+"</font>条记录吗？", {
+			title:"系统提示"
+			,btn: ['确定','取消'] //按钮
+		}, function(){
+			layer.closeAll('dialog');
+			$.post("/user/article/deleteSelected",{"ids":ids},function(result){
+				if(result.success){
+					layer.msg("删除成功！");
+					table.reload("articleListTable",{});
+				}else{
+					layer.msg("删除失败，请联系管理员！");
+				}
+			},"json");
+		}, function(){
+
+		});
+	}
+	function deleteOne(id) {
+		layer.confirm('您确定要删除这条记录吗？',{
+			title:"系统提示"
+			,btn:['删除','取消']
+		},function () {
+			layer.closeAll('dialog');
+			$.post("/user/article/delete",
+					{id:id},
+					function (result) {
+						if(result.success){
+							layer.msg("删除成功！");
+							table.reload("articleListTable",{});
+						}else{
+							layer.msg("删除失败，请联系管理员！");
+						}
+					})
+		})
+	}
 
 	function search(){
 		var s_name=$("#s_name").val();
@@ -152,7 +214,9 @@
     function reviewArticle(id){
         window.location.href="/admin/article/toReViewArticlePage/"+id;
     }
-
+    function modifyArticle(id){
+        window.location.href="/admin/article/toModifyArticlePage/"+id;
+    }
 	function formatAction(d){
 		return "<button class='layui-btn layui-btn-normal layui-btn-xs' onclick='modifyArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>编辑</button><button class='layui-btn layui-btn-warm layui-btn-xs' onclick='deleteOne("+d.id+")'><i class='layui-icon layui-icon-delete' ></i>删除</button>";
 	}
