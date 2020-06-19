@@ -3,6 +3,7 @@ package com.linka39.code07.service.impl;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.repository.ArticleRepository;
 import com.linka39.code07.service.ArticleService;
+import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,9 @@ public class ArticleServiceImpl implements ArticleService {
                     if(s_article.getUser()!=null && s_article.getUser().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("user").get("id"),s_article.getUser().getId()));
                     }
+                    if(s_article.getUser()!=null && StringUtil.isNotEmpty(s_article.getUser().getUserName())){
+                        predicate.getExpressions().add(cb.like(root.get("user").get("userName"),"%"+s_article.getUser().getUserName()+"%"));
+                    }
                 }
                 return predicate;
             }
@@ -85,6 +89,9 @@ public class ArticleServiceImpl implements ArticleService {
                     }
                     if(article.getUser()!=null && article.getUser().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("user").get("id"),article.getUser().getId()));
+                    }
+                    if(article.getUser()!=null && StringUtil.isNotEmpty(article.getUser().getUserName())){
+                        predicate.getExpressions().add(cb.like(root.get("user").get("userName"),"%"+article.getUser().getUserName()+"%"));
                     }
                 }
                 return predicate;
