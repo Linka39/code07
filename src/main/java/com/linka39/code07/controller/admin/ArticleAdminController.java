@@ -9,9 +9,11 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -49,4 +51,42 @@ public class ArticleAdminController {
         return map;
     }
 
+    /**
+     * 跳转到帖子审核页面
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/toReViewArticlePage/{id}")
+    @RequiresPermissions(value = {"跳转到帖子审核页面"})//设置权限
+    public ModelAndView toReViewArticlePage(@PathVariable(value = "id") Integer id){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("title","修改帖子页面");
+        mav.addObject("article",articleService.get(id));
+        mav.setViewName("admin/reviewArticle");
+        return mav;
+    }
+
+    /**
+     * 更新资源帖子的状态
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/updateState")
+    @RequiresPermissions(value = {"修改状态"})//设置权限
+    @ResponseBody
+    public Map<String,Object> updateState(Article article)throws Exception{
+        Map<String,Object> map = new HashMap<>();
+        Article oldArticle = articleService.get(article.getId());
+        // todo 消息模块要添加一个
+        if(article.getState()==2){
+            oldArticle.setState(2);
+            //todo 删除redis首页数据缓存
+        }else{
+            oldArticle.setState(3);
+            oldArticle.setReason(article.getReason());
+        }
+        articleService.save(oldArticle);
+        map.put("success",true);
+        return map;
+    }
 }

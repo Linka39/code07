@@ -149,7 +149,9 @@
 			return "<a href='#' title='审核未通过原因："+d.reason+"''><font color=red>审核未通过</font></a><br/>";
 		}
 	}
-
+    function reviewArticle(id){
+        window.location.href="/admin/article/toReViewArticlePage/"+id;
+    }
 
 	function formatAction(d){
 		return "<button class='layui-btn layui-btn-normal layui-btn-xs' onclick='modifyArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>编辑</button><button class='layui-btn layui-btn-warm layui-btn-xs' onclick='deleteOne("+d.id+")'><i class='layui-icon layui-icon-delete' ></i>删除</button>";
