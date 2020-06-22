@@ -1,4 +1,8 @@
 
+a {
+  cursor:pointer;
+}
+
 .w1170{
 	width: 1170px;
 	margin: 0px auto;
@@ -112,8 +116,30 @@
     padding-bottom: 30px;
     padding-top: 50px;
 }
-.a{
-	cursor:pointer;
+
+.data_list .userComment{
+	margin: 10px;
+	margin-bottom: 40px;
+}
+
+.data_list .userComment button{
+	margin-top:8px;
+	margin-right:5px;
+	float: right;
+}
+
+.commentList{
+	margin: 10px;
+}
+
+.commentList  .comment{
+	margin-top:20px;
+	padding-bottom: 5px;
+	border-bottom: 1px #eee dashed;
+}
+
+.comment .left_img{
+	float: left;
 }
 
 

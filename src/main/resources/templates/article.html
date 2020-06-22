@@ -79,6 +79,18 @@
                 </div>
                 <div align="center" th:utext="${pageCode}"></div>
             </div>
+            <div class="data_list" style="margin-top: 10px">
+                <div class="data_list_title">
+                    <i class="layui-icon layui-icon-dialogue"></i>
+                    <span class="head">评论信息</span>&nbsp;&nbsp;<font style="color: #999;" th:text="'共'+${commentCount}+'条'"></font>
+                </div>
+                <div id="userComment" class="userComment">
+                    <textarea id="commentContent" placeholder="请输入评论信息" class="layui-textarea"></textarea>
+                    <button class="layui-btn layui-btn-radius  layui-btn-sm" onclick="submitData()">&nbsp;&nbsp;提交评论&nbsp;&nbsp;</button>
+                </div>
+                <div id="commentList" class="commentList"></div>
+                <div id="articlePage" class="articlePage"></div>
+            </div>
         </div>
         <div class="pRight">
             <div class="data_list">
@@ -111,6 +123,39 @@
         var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
         $("#"+tMenu).css("color","red");
     });
+    function submitData(){
+        // 下载过这个资源才可以评论
+        if([[${session.currentUser}]]==null){
+            layer.msg("登录后才能评论！");
+            return;
+        }
+        // 判断是否下载过
+        // 添加记录
+        $.post("/user/userDownload/exist",
+            {"id":[[${article.id}]]},
+            function(result){
+            if(result){ // 下载过
+                var content=$("#commentContent").val();
+                if(content==""){
+                    layer.msg("请输入评论信息！");
+                    return;
+                }
+                $.post("/user/comment/save",
+                    {"article.id":[[${article.id}]],
+                        "content":content},
+                function(result){
+                    if(result.success){
+                        $("#commentContent").val("");
+                        layer.msg("评论成功，稍后显示！");
+                    }
+                },"json");
+
+            }else{  // 未下载过
+                layer.msg("下载该资源后才能评论！");
+            }
+        },"json");
+    }
+
     function download(){
         // 判断是否登录
         if([[${session.currentUser}]]==null){
