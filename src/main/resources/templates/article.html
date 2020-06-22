@@ -106,11 +106,127 @@
 <!--thymleaf中取值要加 th:inline="javascript"-->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    layui.use('element', function(){
+    layui.use(['element','form','laypage'], function(){
         var element = layui.element;
         var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
         $("#"+tMenu).css("color","red");
     });
+    function download(){
+        // 判断是否登录
+        if([[${session.currentUser}]]==null){
+            layer.msg("登录后才能下载资源！");
+            return;
+        }
+        // 判断是否下载过
+        // 添加记录
+        $.post("/user/userDownload/exist",
+            {"id":[[${article.id}]]},
+            function(result){
+            if(result){ // 下载过
+                layer.confirm('该资您已经下载过，再下载不需要扣除积分,您确定要下载这个资源吗？', {
+                    title:"下载提示"
+                    ,btn: ['确定','取消'] //按钮
+                }, function(){
+                    layer.closeAll('dialog');
+                    layer.open({
+                        type: 2,
+                        title: '资源下载页面',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['550px', '450'],
+                        content: '/user/article/toDownloadPage/[[${article.id}]]' //动态获取article的id
+                    });
+                }, function(){
+
+                });
+            }else{  // 未下载过
+
+                // 添加记录
+                $.post("/user/userDownload/enough",
+                    {"points":[[${article.points}]]},
+                    function(result){
+                    if(result){  // 积分足够
+                        layer.confirm('该资源下载需要 <font color="red">[[${article.points}]]</font> 积分,您确定要下载这个资源吗？',
+                            {
+                            title:"下载提示"
+                            ,btn: ['确定','取消'] //按钮
+                        }, function(){
+                            layer.closeAll('dialog');
+                            layer.open({
+                                type: 2,
+                                title: '资源下载页面',
+                                shadeClose: true,
+                                shade: 0.8,
+                                area: ['550px', '450'],
+                                content: '/user/article/toDownloadPage/[[${article.id}]]' //iframe的url
+                            });
+
+                        }, function(){
+
+                        });
+
+                    }else{ // 积分不够
+                        layer.msg("sorry，您的积分不够，不能下载该资源！");
+                        return;
+                    }
+                },"json");
+            }
+        },"json");
+    }
+    function vipDownload(){
+        // 判断是否登录
+        if([[${session.currentUser}]]==null){
+            layer.msg("登录后才能下载资源！");
+            return;
+        }
+
+        $.post("/user/isVip",
+            {},
+            function(result){
+            if(result){
+                // 判断是否下载过
+                // 添加记录
+                $.post("/user/userDownload/exist",{"id":[[${article.id}]]},function(result){
+                    if(result){ // 下载过
+                        layer.confirm('该资您已经下载过,您确定要下载这个资源吗？', {
+                            title:"下载提示"
+                            ,btn: ['确定','取消'] //按钮
+                        }, function(){
+                            layer.closeAll('dialog');
+                            layer.open({
+                                type: 2,
+                                title: '资源下载页面',
+                                shadeClose: true,
+                                shade: 0.8,
+                                area: ['550px', '450'],
+                                content: '/user/article/toVipDownloadPage/[[${article.id}]]' //iframe的url
+                            });
+                        }, function(){
+
+                        });
+                    }else{  // 未下载过
+                        layer.confirm('您确定要下载这个资源吗？', {
+                            title:"下载提示"
+                            ,btn: ['确定','取消'] //按钮
+                        }, function(){
+                            layer.closeAll('dialog');
+                            layer.open({
+                                type: 2,
+                                title: '资源下载页面',
+                                shadeClose: true,
+                                shade: 0.8,
+                                area: ['550px', '450'],
+                                content: '/user/article/toVipDownloadPage/[[${article.id}]]' //iframe的url
+                            });
+                        }, function(){
+                        });
+                    }
+                },"json");
+            }else{
+                layer.msg("sorry,您不是VIP用户，不能用此通道！");
+            }
+        },"json");
+    }
     /*]]>*/
 </script>
 </html>

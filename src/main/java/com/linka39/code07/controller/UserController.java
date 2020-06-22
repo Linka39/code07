@@ -308,4 +308,11 @@ public class UserController {
         }
 
     }
+
+    @ResponseBody
+    @RequestMapping("/isVip")
+    public Boolean isVip(HttpSession session){
+        User user = (User) session.getAttribute("currentUser");
+        return user.getVip();
+    }
 }

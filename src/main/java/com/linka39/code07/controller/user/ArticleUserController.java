@@ -2,7 +2,10 @@ package com.linka39.code07.controller.user;
 
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.User;
+import com.linka39.code07.entity.UserDownload;
 import com.linka39.code07.service.ArticleService;
+import com.linka39.code07.service.UserDownloadService;
+import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.DateUtil;
 import com.linka39.code07.util.StringUtil;
 import org.apache.commons.io.FileUtils;
@@ -33,6 +36,11 @@ import java.util.Map;
 public class ArticleUserController {
     @Value("${articleImageFilePath}")
     private String articleImageFilePath;
+
+    @Autowired
+    private UserDownloadService userDownloadService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private ArticleService articleService;
     /**
@@ -159,7 +167,6 @@ public class ArticleUserController {
 
     /**
      * 根据id删除一条
-     * @param file
      * @return
      * @throws Exception
      */
@@ -189,5 +196,80 @@ public class ArticleUserController {
         Map<String,Object> map = new HashMap<>();
         map.put("success",true);
         return map;
+    }
+
+    /**
+     * 跳转到资源下载页面
+     * @param id
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/toDownloadPage/{id}")
+    public ModelAndView toDownloadPage(@PathVariable(value = "id")Integer id,HttpSession session)throws Exception{
+        //积分信息不能直接传入，避免别人恶意修改
+        UserDownload userDownload = new UserDownload();
+        Article article = articleService.get(id);
+
+        User user = (User) session.getAttribute("currentUser");
+        Boolean isDownload=false;//是否下载过
+        Integer count = userDownloadService.getCountByUserIdAndArticleId(user.getId(),id);
+        if(count>0)
+            isDownload=true;
+        if(!isDownload){
+            if(user.getPoints()-article.getPoints()<0) {//用户积分不够
+                return null;
+            }
+            //扣下载人积分
+            user.setPoints(user.getPoints()-article.getPoints());
+            userService.save(user);
+            //加分享人积分
+            User articleUser = article.getUser();
+            articleUser.setPoints(articleUser.getPoints()+article.getPoints());
+            userService.save(articleUser);
+            //保存用户下载信息
+            userDownload.setArticle(article);
+            userDownload.setUser(user);
+            userDownload.setDownloadDate(new Date());
+            userDownloadService.save(userDownload);
+        }
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("article",articleService.get(id));
+        mav.setViewName("user/downloadPage");
+        return mav;
+    }
+    /**
+     * 跳转到VIP下载页面
+     * @param id
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/toVipDownloadPage/{id}")
+    public ModelAndView toVipDownloadPage(@PathVariable(value = "id")Integer id,HttpSession session)throws Exception{
+        //积分信息不能直接传入，避免别人恶意修改
+        UserDownload userDownload = new UserDownload();
+        Article article = articleService.get(id);
+
+        User user = (User) session.getAttribute("currentUser");
+        if(!user.getVip()){//判断是否vip
+            return null;
+        }
+        Boolean isDownload=false;//是否下载过
+        Integer count = userDownloadService.getCountByUserIdAndArticleId(user.getId(),id);
+        if(count>0)
+            isDownload=true;
+        if(!isDownload){
+
+            //保存用户下载信息
+            userDownload.setArticle(article);
+            userDownload.setUser(user);
+            userDownload.setDownloadDate(new Date());
+            userDownloadService.save(userDownload);
+        }
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("article",articleService.get(id));
+        mav.setViewName("user/downloadPage");
+        return mav;
     }
 }
