@@ -1,5 +1,7 @@
 package com.linka39.code07.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -59,7 +61,7 @@ public class Comment {
     public void setContent(String content) {
         this.content = content;
     }
-
+    @JsonSerialize(using = CustomDateTimeSerializer.class)
     public Date getCommentDate() {
         return commentDate;
     }

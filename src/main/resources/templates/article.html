@@ -120,8 +120,43 @@
     /*<![CDATA[*/
     layui.use(['element','form','laypage'], function(){
         var element = layui.element;
+        var laypage = layui.laypage;
         var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
         $("#"+tMenu).css("color","red");
+
+        //调用分页
+        laypage.render({
+            elem: 'articlePage'
+            ,limit:6
+            ,count: [[${commentCount}]]
+            ,jump: function(obj){
+                $("#commentList").empty();
+                $.post("/comment/list",
+                    {"article.id":[[${article.id}]],
+                        "page":obj.curr},
+                function(result){
+                    var rows=result;
+                    if(rows.length==0){
+                        $("#commentList").html("<p align='center'>暂无评论</p>");
+                    }
+                    for(var i=0;i<rows.length;i++){
+                        var row=rows[i];
+                        $("#commentList").append("<div class='comment'>"+
+                            "<div class='left_img'>"+
+                            "<img src='/userImage/"+row.user.imageName+"' class='layui-nav-img'/>"+
+                            "</div>"+
+                            "<div class='right'>"+
+                            "<dt class='top'>"+
+                            row.user.userName+
+                            "<span class='time'>"+row.commentDate+"</span>"+
+                            "</dt>"+
+                            "<dd class='bottom'>"+row.content+"</dd>"+
+                            "</div>"+
+                            "</div>");
+                    }
+                },"json");
+            }
+        });
     });
     function submitData(){
         // 下载过这个资源才可以评论

@@ -1,15 +1,27 @@
 package com.linka39.code07.service.impl;
 
 import com.linka39.code07.entity.Comment;
+import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.UserDownload;
 import com.linka39.code07.repository.CommentRepository;
 import com.linka39.code07.repository.UserDownloadRepository;
 import com.linka39.code07.service.CommentService;
 import com.linka39.code07.service.UserDownloadService;
+import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * 评论Service实现类
@@ -23,5 +35,46 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void save(Comment comment) {
         commentRepository.save(comment);
+    }
+
+    @Override
+    public List<Comment> list(Comment s_comment, Integer page, Integer pageSize, Sort.Direction direction, String... properties) {
+        Pageable pageable= PageRequest.of(page-1,pageSize,direction,properties);
+        Page<Comment> commentPage= commentRepository.findAll(new Specification<Comment>() {
+            @Override
+            public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if( s_comment!=null){
+                    if(s_comment.getState()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("state"),s_comment.getState()));
+                    }
+                    if(s_comment.getArticle()!=null&&s_comment.getArticle().getId()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("article").get("id"),s_comment.getArticle().getId()));
+                    }
+                }
+                return predicate;
+            }
+        },pageable);
+        return commentPage.getContent();
+    }
+
+    @Override
+    public Long getTotal(Comment s_comment) {
+        Long total=commentRepository.count(new Specification<Comment>() {
+            @Override
+            public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if( s_comment!=null){
+                    if(s_comment.getState()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("state"),s_comment.getState()));
+                    }
+                    if(s_comment.getArticle()!=null&&s_comment.getArticle().getId()!=null){
+                        predicate.getExpressions().add(cb.equal(root.get("article").get("id"),s_comment.getArticle().getId()));
+                    }
+                }
+                return predicate;
+            }
+        });
+        return total;
     }
 }

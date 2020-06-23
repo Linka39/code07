@@ -142,4 +142,23 @@ a {
 	float: left;
 }
 
+.comment .right .top a{
+	font-weight: 700;
 
+}
+
+.comment .right .time{
+	color: #999;
+    margin: 12px 30px 0;
+    font-size: 12px;
+}
+
+.comment .right .bottom{
+	padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.left_img img{
+	width: 40px;
+	height: 40px;
+}

@@ -2,8 +2,10 @@ package com.linka39.code07.controller;
 
 import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.Article;
+import com.linka39.code07.entity.Comment;
 import com.linka39.code07.init.InitSystem;
 import com.linka39.code07.service.ArticleService;
+import com.linka39.code07.service.CommentService;
 import com.linka39.code07.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private CommentService commentService;
 
     /**
      * 根据条件分页查询资源帖子信息
@@ -76,9 +80,14 @@ public class ArticleController {
         Article article=articleService.get(id);
         Article s_article = new Article();
         s_article.setHot(true);
+        s_article.setState(2);
         s_article.setArcType(article.getArcType());//获取同资源类型
         List<Article> hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
         mav.addObject("hotArticleList",hotArticleList);
+        Comment s_comment = new Comment();
+        s_comment.setArticle(article);
+        s_comment.setState(1);//只展示审核通过的评论
+        mav.addObject("commentCount",commentService.getTotal(s_comment));
         mav.addObject("article",article);
         mav.addObject("title",article.getName());
         mav.setViewName("article");
