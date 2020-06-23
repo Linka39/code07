@@ -17,5 +17,7 @@ public interface CommentService {
     public List<Comment> list(Comment s_comment, Integer page, Integer pageSize, Direction direction, String...properties );
 
     public Long getTotal(Comment s_comment);
+
+    public void delete(Integer id);
 }
 
