@@ -19,5 +19,7 @@ public interface CommentService {
     public Long getTotal(Comment s_comment);
 
     public void delete(Integer id);
+
+    public Comment find(Integer id);
 }
 
