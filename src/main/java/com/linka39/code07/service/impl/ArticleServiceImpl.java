@@ -27,6 +27,11 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleRepository articleRepository;
 
     @Override
+    public List<Article> listAll() {
+        return articleRepository.findAll();
+    }
+
+    @Override
     public List<Article> list(Article s_article, Integer page, Integer pageSize, Sort.Direction direction, String... properties) {
         Pageable pageable= PageRequest.of(page-1,pageSize,direction,properties);
         //根据审核状态来筛选

@@ -110,7 +110,8 @@
             layer.load(1, {
                 shade: [0.1,'#fff'] //0.1透明度的白色背景
             });
-            $.post("/admin/article/genAllIndex",{},function(result){
+            $.post("/admin/article/genAllIndex",{},
+            function(result){
                 if(result){
                     layer.closeAll('loading');
                     layer.msg("生成成功！");

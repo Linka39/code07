@@ -22,3 +22,5 @@ spring:
 userImageFilePath: E://my_project/code07/userImage/
 
 articleImageFilePath: E://my_project/code07/uploadImage/
+
+lucenePath: E://my_project/code07/myLucene

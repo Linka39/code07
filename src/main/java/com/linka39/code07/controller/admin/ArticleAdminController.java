@@ -3,6 +3,7 @@ package com.linka39.code07.controller.admin;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.Link;
 import com.linka39.code07.init.InitSystem;
+import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.ArticleService;
 import com.linka39.code07.service.LinkService;
 import com.linka39.code07.util.DateUtil;
@@ -37,6 +38,25 @@ public class ArticleAdminController {
     private InitSystem initSystem;
     @Value("${articleImageFilePath}")
     private String articleImageFilePath;
+    @Autowired
+    ArticleIndex articleIndex;
+
+    /**
+     * 生成所有帖子的索引
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions(value = {"生成所有帖子索引"})//设置权限
+    @RequestMapping(value = "/genAllIndex")
+    public Boolean genAllIndex(){
+        List<Article> articleList = articleService.listAll();
+        for(Article article:articleList){
+            if(!articleIndex.addIndex(article)){//有一索引没添加成功的话
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * 修改帖子
@@ -211,4 +231,6 @@ public class ArticleAdminController {
         map.put("success",true);
         return map;
     }
+
+
 }

@@ -16,6 +16,8 @@ public interface ArticleService {
     //可变长参数，这个位置可以传入任意个该类型参数,或者传入该类型的数组
     public List<Article> list(Article s_article,Integer page, Integer pageSize,Direction direction,String...properties );
 
+    //查询所有帖子
+    public List<Article> listAll();
     /**
      * 根据条件查询总记录数
      * @param article
