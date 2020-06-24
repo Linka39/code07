@@ -162,3 +162,29 @@ a {
 	width: 40px;
 	height: 40px;
 }
+
+.data_result .title a{
+	color: #256EB1 ;
+	text-decoration: underline;
+}
+
+.data_result .summary{
+	display:block;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	line-height: 25px;
+	padding-top: 0px;
+	font-size: 13px;
+	color: rgb(0, 0, 0);
+}
+
+.data_result .link a{
+	color:#008400
+}
+
+.data_result .link .publishDate{
+
+}
+
+.data_list .data_result{
+	padding: 15px;
+}

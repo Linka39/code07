@@ -18,7 +18,17 @@ public class Article {
     @Column(length = 200)
     private String name;    //资源名称
 
+    public String getPublishDateStr() {
+        return publishDateStr;
+    }
+
+    public void setPublishDateStr(String publishDateStr) {
+        this.publishDateStr = publishDateStr;
+    }
+
     private Date publishDate; //发布日期
+    @Transient
+    private String publishDateStr;//不映射到数据库
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;  //所属用户

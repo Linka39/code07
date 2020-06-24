@@ -4,9 +4,11 @@ import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.Comment;
 import com.linka39.code07.init.InitSystem;
+import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.ArticleService;
 import com.linka39.code07.service.CommentService;
 import com.linka39.code07.util.PageUtil;
+import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ public class ArticleController {
     private ArticleService articleService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private ArticleIndex articleIndex;
 
     /**
      * 根据条件分页查询资源帖子信息
@@ -68,6 +72,37 @@ public class ArticleController {
     }
 
     /**
+     * 关键字分词搜索
+     * @return
+     */
+    @RequestMapping("/search")
+    public ModelAndView search(String q,@RequestParam(value = "page",required = false)String page,HttpServletRequest request) throws Exception {
+        //通过session来获取资源类型
+        request.getSession().setAttribute("tMenu","t_0");
+        if(StringUtil.isEmpty(page)){
+            page="1";
+        }
+        Article s_article = new Article();
+        s_article.setState(2); //设置选取审核通过的帖子
+        s_article.setHot(true);//设置选取热门的帖子
+        List<Article> indexHotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
+        List<Article> articleList=articleIndex.search(q);
+        Integer pageSize = 10;
+        Integer curPage = Integer.parseInt(page);
+        Integer toIndex=articleList.size()>curPage*10?curPage*10:articleList.size();
+        ModelAndView mav = new ModelAndView();
+        //mav.setViewName 默认的引擎就为tyhmleaf
+        mav.addObject("title",q);
+        mav.addObject("pageCode", this.genUpAndDownPageCode(curPage,articleList.size(),q,pageSize));
+        mav.addObject("q",q);
+        mav.addObject("resultTotal",articleList.size());
+        mav.addObject("articleList",   articleList.subList((curPage-1)*10,toIndex));//对集合框架进行截取
+        mav.addObject("hotArticleList", indexHotArticleList);
+        mav.setViewName("result");
+        return mav;
+    }
+
+    /**
      * 根据id查询帖子详情信息
      * @param id
      * @return
@@ -92,5 +127,34 @@ public class ArticleController {
         mav.addObject("title",article.getName());
         mav.setViewName("article");
         return mav;
+    }
+    /**
+     * 生成上一页，下一页代码
+     * @param page
+     * @param totalNum
+     * @param q
+     * @param pageSize
+     * @return
+     */
+    private String genUpAndDownPageCode(Integer page,Integer totalNum,String q,Integer pageSize){
+        long totalPage=totalNum%pageSize==0?totalNum/pageSize:totalNum/pageSize+1;
+        StringBuffer pageCode=new StringBuffer();
+        if(totalPage==0){
+            return "";
+        }else{
+            pageCode.append("<div class='layui-box layui-laypage layui-laypage-default'>");
+            if(page>1){
+                pageCode.append("<a href='/article/search?page="+(page-1)+"&q="+q+"' class='layui-laypage-prev'>上一页</a>");
+            }else{
+                pageCode.append("<a href='#' class='layui-laypage-prev layui-disabled'>上一页</a>");
+            }
+            if(page<totalPage){
+                pageCode.append("<a href='/article/search?page="+(page+1)+"&q="+q+"' class='layui-laypage-next'>下一页</a>");
+            }else{
+                pageCode.append("<a href='#' class='layui-laypage-next layui-disabled'>下一页</a>");
+            }
+            pageCode.append("</div>");
+        }
+        return pageCode.toString();
     }
 }

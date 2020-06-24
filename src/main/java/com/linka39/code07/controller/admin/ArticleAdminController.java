@@ -74,6 +74,7 @@ public class ArticleAdminController {
         oldArticle.setPassword(article.getPassword());
         oldArticle.setPoints(article.getPoints());
         if(oldArticle.getState()==2){//审核未通过时，更新Lucene索引
+            articleIndex.addIndex(oldArticle);
            //todo 修改Lucene索引，redis缓存中删除这个索引
         }
         articleService.save(oldArticle);
@@ -171,8 +172,9 @@ public class ArticleAdminController {
         // todo 消息模块要添加一个
         if(article.getState()==2){
             oldArticle.setState(2);
-            //todo 删除redis首页数据缓存
+            articleIndex.addIndex(oldArticle);
         }else{
+            //todo 删除redis首页数据缓存
             oldArticle.setState(3);
             oldArticle.setReason(article.getReason());
         }
