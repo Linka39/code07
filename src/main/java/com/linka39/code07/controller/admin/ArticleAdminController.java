@@ -5,7 +5,9 @@ import com.linka39.code07.entity.Link;
 import com.linka39.code07.init.InitSystem;
 import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.ArticleService;
+import com.linka39.code07.service.CommentService;
 import com.linka39.code07.service.LinkService;
+import com.linka39.code07.service.UserDownloadService;
 import com.linka39.code07.util.DateUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -40,6 +42,10 @@ public class ArticleAdminController {
     private String articleImageFilePath;
     @Autowired
     ArticleIndex articleIndex;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private UserDownloadService userDownloadService;
 
     /**
      * 生成所有帖子的索引
@@ -74,7 +80,7 @@ public class ArticleAdminController {
         oldArticle.setPassword(article.getPassword());
         oldArticle.setPoints(article.getPoints());
         if(oldArticle.getState()==2){//审核未通过时，更新Lucene索引
-            articleIndex.addIndex(oldArticle);
+            articleIndex.updateIndex(oldArticle);
            //todo 修改Lucene索引，redis缓存中删除这个索引
         }
         articleService.save(oldArticle);
@@ -195,7 +201,10 @@ public class ArticleAdminController {
         articleService.delete(id);
         //todo 删除该帖子下的所有评论
         //todo 删除redis索引
+        commentService.deleteByArticleId(id);
+        userDownloadService.deleteByArticleId(id);
         //todo 删除索引
+        articleIndex.deleteIndex(String.valueOf(id));
         map.put("success",true);
         return map;
     }
@@ -211,8 +220,11 @@ public class ArticleAdminController {
         for(int i=0;i<idStr.length;++i){
             articleService.delete(Integer.parseInt(idStr[i]));
             //todo 删除该帖子下的所有评论
+            commentService.deleteByArticleId(Integer.parseInt(idStr[i]));
+            userDownloadService.deleteByArticleId(Integer.parseInt(idStr[i]));
             //todo 删除redis索引
             //todo 删除索引
+            articleIndex.deleteIndex(String.valueOf(idStr[i]));
         }
         Map<String,Object> map = new HashMap<>();
         map.put("success",true);

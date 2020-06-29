@@ -6,10 +6,7 @@ import com.linka39.code07.util.StringUtil;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.*;
@@ -63,6 +60,54 @@ public class ArticleIndex {
             doc.add(new StringField("publishDate", DateUtil.formatDate(new Date(),"yyyy-MM-dd"),Field.Store.YES));
             doc.add(new TextField("content",article.getContent(),Field.Store.YES));
             writer.addDocument(doc);
+            writer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            lock.unlock();
+        }
+        return true;
+    }
+    /**
+     * 更新索引
+     * @param article
+     */
+    public boolean updateIndex(Article article){
+        ReentrantLock lock=new ReentrantLock();
+        //进行锁的操作，多线程下只有一个执行，完成后再执行下一个
+        lock.lock();
+        try{
+            IndexWriter writer = getWriter();
+            Document doc = new Document();
+            //存储索引，值，方式(是否存入)
+            doc.add(new StringField("id",String.valueOf(article.getId()), Field.Store.YES));
+            doc.add(new TextField("name",article.getName(),Field.Store.YES));
+            doc.add(new StringField("publishDate", DateUtil.formatDate(new Date(),"yyyy-MM-dd"),Field.Store.YES));
+            doc.add(new TextField("content",article.getContent(),Field.Store.YES));
+            writer.updateDocument(new Term(String.valueOf(article.getId())),doc);//根据id更新索引
+            writer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            lock.unlock();
+        }
+        return true;
+    }
+    /**
+     * 删除帖子索引
+     * @param
+     */
+    public boolean deleteIndex(String id){
+        ReentrantLock lock=new ReentrantLock();
+        //进行锁的操作，多线程下只有一个执行，完成后再执行下一个
+        lock.lock();
+        try{
+            IndexWriter writer = getWriter();
+            writer.deleteDocuments(new Term("id",id));//执行删除命令
+            writer.forceMergeDeletes();//强制删除
+            writer.commit();//提交
             writer.close();
         }catch (Exception e){
             e.printStackTrace();

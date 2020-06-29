@@ -93,4 +93,9 @@ public class CommentServiceImpl implements CommentService {
     public Comment find(Integer id) {
         return commentRepository.findById(id).get();
     }
+
+    @Override
+    public void deleteByArticleId(Integer id) {
+        commentRepository.deleteByArticleId(id);
+    }
 }

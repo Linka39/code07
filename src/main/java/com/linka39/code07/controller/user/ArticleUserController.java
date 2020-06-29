@@ -3,7 +3,9 @@ package com.linka39.code07.controller.user;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.UserDownload;
+import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.ArticleService;
+import com.linka39.code07.service.CommentService;
 import com.linka39.code07.service.UserDownloadService;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.DateUtil;
@@ -43,6 +45,10 @@ public class ArticleUserController {
     private UserService userService;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ArticleIndex articleIndex;
+    @Autowired
+    private CommentService commentService;
     /**
      * 跳转到发布帖子页面
      * @return
@@ -129,11 +135,9 @@ public class ArticleUserController {
         oldArticle.setDownload1(article.getDownload1());
         oldArticle.setPassword(article.getPassword());
         oldArticle.setPoints(article.getPoints());
-        if(oldArticle.getState()==3){//审核未通过时，点击修改状态改为1未审核
-            oldArticle.setState(1);
-        }
-        if(oldArticle.getState()==3){
+        if(oldArticle.getState()==2){
             //修改Lucene索引，redis缓存中删除这个索引
+            articleIndex.updateIndex(oldArticle);
         }
         articleService.save(oldArticle);
         ModelAndView mav = new ModelAndView();
@@ -175,7 +179,11 @@ public class ArticleUserController {
     public Map<String,Object> delete(Integer id)throws Exception{
         Map<String,Object> map = new HashMap<>();
         articleService.delete(id);
+        articleIndex.deleteIndex(String.valueOf(id));
         //删除该帖子下的所有评论
+        commentService.deleteByArticleId(id);
+        userDownloadService.deleteByArticleId(id);
+        //删除用户下载该帖子的信息
         //删除redis索引
         map.put("success",true);
         return map;
@@ -191,6 +199,9 @@ public class ArticleUserController {
         for(int i=0;i<idStr.length;++i){
             articleService.delete(Integer.parseInt(idStr[i]));
             //删除该帖子下的所有评论
+            commentService.deleteByArticleId(Integer.parseInt(idStr[i]));
+            userDownloadService.deleteByArticleId(Integer.parseInt(idStr[i]));
+            articleIndex.deleteIndex(String.valueOf(idStr[i]));
             //删除redis索引
         }
         Map<String,Object> map = new HashMap<>();

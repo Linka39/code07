@@ -20,5 +20,7 @@ public interface UserDownloadService {
      * @param userDownload
      */
     public void save(UserDownload userDownload);
+
+    public void deleteByArticleId(Integer id);
 }
 

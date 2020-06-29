@@ -21,5 +21,7 @@ public interface CommentService {
     public void delete(Integer id);
 
     public Comment find(Integer id);
+
+    public void deleteByArticleId(Integer id);
 }
 

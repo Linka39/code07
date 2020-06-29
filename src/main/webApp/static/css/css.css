@@ -188,3 +188,13 @@ a {
 .data_list .data_result{
 	padding: 15px;
 }
+
+.data_list .articlePage{
+	text-align: center;
+}
+
+.data_list .datas .relate li{
+	float: left;
+	padding-left: 40px;
+	width: 380px;
+}
