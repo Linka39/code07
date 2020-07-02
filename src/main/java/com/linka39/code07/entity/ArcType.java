@@ -1,13 +1,14 @@
 package com.linka39.code07.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 资源类型实体类
  */
 @Entity
 @Table(name = "t_arcType")
-public class ArcType {
+public class ArcType implements Serializable {
     @Id //设为主键
     @GeneratedValue//设置自动生成
     private Integer id;//编号

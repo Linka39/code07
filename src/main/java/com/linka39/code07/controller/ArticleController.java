@@ -8,6 +8,7 @@ import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.ArticleService;
 import com.linka39.code07.service.CommentService;
 import com.linka39.code07.util.PageUtil;
+import com.linka39.code07.util.RedisUtil;
 import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -34,6 +35,8 @@ public class ArticleController {
     private CommentService commentService;
     @Autowired
     private ArticleIndex articleIndex;
+    @Autowired
+    private RedisUtil<Article> redisUtil;
 
     /**
      * 根据条件分页查询资源帖子信息
@@ -112,13 +115,29 @@ public class ArticleController {
     @RequestMapping("/{id}")
     public ModelAndView view(@PathVariable(value = "id")Integer id)throws Exception{
         ModelAndView mav = new ModelAndView();
-        //用get()将optional类转换为实体类
-        Article article=articleService.get(id);
-        Article s_article = new Article();
-        s_article.setHot(true);
-        s_article.setState(2);
-        s_article.setArcType(article.getArcType());//获取同资源类型
-        List<Article> hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
+        String key="article_"+id;
+        Article article = null;
+        if(redisUtil.hasKey(key)){
+            article= (Article) redisUtil.get(key);
+        }else{
+            //用get()将optional类转换为实体类
+             article=articleService.get(id);
+            redisUtil.set(key,article,60*60);
+        }
+
+        List<Article> hotArticleList =null;
+        String hKey="hotArticleList_type_"+article.getArcType().getId();
+        if(redisUtil.hasKey(hKey)){
+            hotArticleList= redisUtil.lGet(hKey,0,-1);
+        }else{
+            Article s_article = new Article();
+            s_article.setHot(true);
+            s_article.setState(2);
+            s_article.setArcType(article.getArcType());//获取同资源类型
+            hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
+            redisUtil.lSet(hKey,hotArticleList);
+        }
+
         mav.addObject("hotArticleList",hotArticleList);
         Comment s_comment = new Comment();
         s_comment.setArticle(article);

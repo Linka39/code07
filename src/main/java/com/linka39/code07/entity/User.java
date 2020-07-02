@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Date;
 @Entity
 //前后端都需要进行校验，前端是为了减少后端压力，后端是为了防止post请求发送校验
 @Table(name = "t_user")
-public class User {
+public class User implements Serializable {
     @Id //设为主键
     @GeneratedValue//设置自动生成
     private Integer id; //编号

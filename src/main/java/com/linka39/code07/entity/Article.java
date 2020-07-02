@@ -3,6 +3,7 @@ package com.linka39.code07.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,13 +11,16 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_article")
-public class Article {
+//数据序列化，方便在网络中存储
+public class Article implements Serializable {
     @Id //设为主键
     @GeneratedValue //设置自动生成
     private Integer id;//编号
 
     @Column(length = 200)
     private String name;    //资源名称
+
+
 
     public String getPublishDateStr() {
         return publishDateStr;
