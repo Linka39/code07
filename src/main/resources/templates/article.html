@@ -91,6 +91,16 @@
                 <div id="commentList" class="commentList"></div>
                 <div id="articlePage" class="articlePage"></div>
             </div>
+            <div class="data_list" style="margin-top: 10px">
+                <div class="data_list_title">
+                    <i class="layui-icon layui-icon-component"></i>
+                    <span class="head">相关资源</span>
+                </div>
+                <div class="datas" style="height: 250px">
+                    <ul id="relateResource" class="relate">
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="pRight">
             <div class="data_list">
@@ -157,7 +167,26 @@
                 },"json");
             }
         });
+
     });
+    // 相关资源加载
+    $.post("/article/loadRelatedResources",
+        {"q":[[${article.name}]]},
+        function(result){
+        var rows=result;
+        for(var i=0;i<rows.length;i++){
+            var row=rows[i];
+            var subName;
+            if(row.name.length>30){
+                subName=row.name.substring(0,30);
+            }else{
+                subName=row.name;
+            }
+            $("#relateResource").append("<li>"+
+                "<a target='_blank' href='/article/"+row.id+"' title='"+row.name+"'>"+subName+"</a>"+
+                "</li>");
+        }
+    },"json");
     function submitData(){
         // 下载过这个资源才可以评论
         if([[${session.currentUser}]]==null){

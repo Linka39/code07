@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -128,6 +129,17 @@ public class ArticleController {
         mav.setViewName("article");
         return mav;
     }
+    //加载相关资源
+    @RequestMapping("/loadRelatedResources")
+    @ResponseBody
+    public List<Article> loadRelatedResourcs(String q)throws Exception{
+        if(StringUtil.isEmpty(q)){
+            return null;
+        }
+        List<Article> articleList= articleIndex.searchNoHighLighter(q);
+        return articleList;
+    }
+
     /**
      * 生成上一页，下一页代码
      * @param page
