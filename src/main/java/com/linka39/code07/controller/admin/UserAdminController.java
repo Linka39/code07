@@ -3,6 +3,7 @@ import com.linka39.code07.entity.User;
 
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.CryptographyUtil;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +109,36 @@ public class UserAdminController {
         Map<String,Object> map = new HashMap<>();
         map.put("success",true);
         return map;
+    }
+    /**
+     * 修改用户状态
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/modifyPassword")
+    @RequiresPermissions(value = {"修改管理员密码"})//设置权限
+    @ResponseBody
+    public Map<String,Object> modifyPassword(String oldpassword, String password, HttpSession session)throws Exception{
+        User user = (User) session.getAttribute("currentUser");
+        Map<String,Object> map = new HashMap<>();
+        if(!user.getPassword().equals(CryptographyUtil.md5(oldpassword,CryptographyUtil.SALT))){
+            map.put("success",false);
+            map.put("errorInfo","原密码错误");
+            return map;
+        }
+        User oldUser = userService.findById(user.getId());
+        oldUser.setPassword(CryptographyUtil.md5(password,CryptographyUtil.SALT));
+        userService.save(oldUser);
+        map.put("success",true);
+        return map;
+    }
+
+    @RequestMapping("/logout")
+    @RequiresPermissions(value = {"安全退出"})//设置权限
+    public String logout(HttpSession session){
+        //底层就是清除session
+        SecurityUtils.getSubject().logout();
+        return "redirect:/adminLogin.html";
     }
 
 }

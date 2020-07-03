@@ -122,7 +122,7 @@ public class ArticleController {
         }else{
             //用get()将optional类转换为实体类
              article=articleService.get(id);
-            redisUtil.set(key,article,60*60);
+            redisUtil.set(key,article,20*60);
         }
 
         List<Article> hotArticleList =null;
@@ -187,5 +187,13 @@ public class ArticleController {
             pageCode.append("</div>");
         }
         return pageCode.toString();
+    }
+    //查看次数+1
+    @RequestMapping("/updateView")
+    @ResponseBody
+    private void updateView(Integer id)throws Exception{
+        Article article = articleService.get(id);
+        article.setView(article.getView()+1);
+        articleService.save(article);
     }
 }

@@ -96,7 +96,28 @@ public class ArticleIndex {
         return true;
     }
     /**
-     * 删除帖子索引
+     * 删除所有帖子索引
+     * @param
+     */
+    public boolean deleteAllIndex(){
+        ReentrantLock lock=new ReentrantLock();
+        //进行锁的操作，多线程下只有一个执行，完成后再执行下一个
+        lock.lock();
+        try{
+            IndexWriter writer = getWriter();
+            writer.deleteAll();
+            writer.commit();//提交
+            writer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            lock.unlock();
+        }
+        return true;
+    }
+    /**
+     * 按id删除帖子索引
      * @param
      */
     public boolean deleteIndex(String id){

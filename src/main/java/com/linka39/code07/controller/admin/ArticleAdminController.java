@@ -56,6 +56,7 @@ public class ArticleAdminController {
     @RequestMapping(value = "/genAllIndex")
     public Boolean genAllIndex(){
         List<Article> articleList = articleService.listAll();
+        articleIndex.deleteAllIndex();
         for(Article article:articleList){
             if(!articleIndex.addIndex(article)){//有一索引没添加成功的话
                 return false;
