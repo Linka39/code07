@@ -1,0 +1,15 @@
+<meta charset="UTF-8"/>
+<div id="f" xmlns:th="http://www.thymeleaf.org">
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>系统消息列表</legend>
+	</fieldset>
+	<div class="listMessage">
+		<ul th:each="message:${messageList}">
+			<li>
+				<font color="blue" th:text="'【'+${#dates.format(message.publishDate,'yyyy-MM-dd HH:mm')}+'】'"></font>
+				<span th:text="${message.content}"></span>
+			</li>
+		</ul>
+		<div align="center" style="padding-top: 20px" th:utext="${pageCode}"></div>
+	</div>
+</div>

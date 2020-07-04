@@ -12,7 +12,9 @@ import java.util.List;
 public interface MessageService {
     //查询该用户的消息总数
     public Integer getCountByUserId(Integer userId);
-
+    public List<Message> list(Message s_message,Integer page, Integer pageSize,Direction direction,String...properties );
+    public Long getTotal(Message message);
     public void save(Message message);
+    public void updateState(Integer userId);
 }
 
