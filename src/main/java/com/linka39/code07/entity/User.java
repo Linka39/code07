@@ -19,6 +19,8 @@ public class User implements Serializable {
     @GeneratedValue//设置自动生成
     private Integer id; //编号
 
+    private Integer messageCount;//未查看消息记录数
+
     @NotEmpty(message = "请输入用户名！")
     @Column(length = 100)
     private String userName; //用户名
@@ -117,5 +119,13 @@ public class User implements Serializable {
 
     public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
+    }
+
+    public Integer getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(Integer messageCount) {
+        this.messageCount = messageCount;
     }
 }

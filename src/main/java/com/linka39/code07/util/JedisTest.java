@@ -9,7 +9,9 @@ public class JedisTest {
         jedis.auth("1111"); // 设置密码
         jedis.set("name", "过问"); // 设置值
         String value=jedis.get("name"); // 获取值
-        System.out.println(value+"\n"+jedis.get("article_12"));
+        System.out.println(value+"\n");
+//        jedis.del("hotArticleList_type_20");
+        System.out.println(jedis.get("hotArticleList_type_20"));
         jedis.close(); // 释放连接资源
     }
 }

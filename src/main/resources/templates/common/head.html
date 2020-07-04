@@ -19,6 +19,9 @@
          <li th:if="${session.currentUser!=null}" class="layui-nav-item" style="float: right;">
              <a href="/toUserCenterPage">个人中心<span class="layui-badge-dot"></span></a>
          </li>
+         <li th:if="${session.currentUser!=null and session.currentUser.messageCount!=0}" class="layui-nav-item" style="float: right;">
+             <a href="/user/message/see">系统消息<span class="layui-badge" id="messageCount" th:text="${session.currentUser.messageCount}"></span></a>
+         </li>
 
          <li th:if="${session.currentUser==null}" class="layui-nav-item a" style="float: right;"><a  onclick="showRegister()" style="padding-left: 8px;padding-right: 8px;" target="_blank">注册</a></li>
          <li th:if="${session.currentUser==null}" class="layui-nav-item a" style="float: right;"><a  onclick="showLogin()" style="padding-left: 8px;padding-right: 8px;" target="_blank">登录</a></li>

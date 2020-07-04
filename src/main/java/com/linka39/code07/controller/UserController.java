@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.VaptchaMessage;
+import com.linka39.code07.service.MessageService;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.CryptographyUtil;
 import com.linka39.code07.util.DateUtil;
@@ -54,6 +55,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageService messageService;
+
     //@Autowired//不能用Autowired装配，其是按类型来的
     @Resource
     private JavaMailSender mailSender;
@@ -97,6 +101,8 @@ public class UserController {
                     //logout()，底层会清空session
                     subject.logout();
                 }else{
+                    Integer messageCount = messageService.getCountByUserId(currentUser.getId());
+                    currentUser.setMessageCount(messageCount);
                     map.put("success",true);
                     request.getSession().setAttribute("currentUser",currentUser);
                 }

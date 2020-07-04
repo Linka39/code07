@@ -182,8 +182,8 @@ public class ArticleUserController {
         articleIndex.deleteIndex(String.valueOf(id));
         //删除该帖子下的所有评论
         commentService.deleteByArticleId(id);
-        userDownloadService.deleteByArticleId(id);
         //删除用户下载该帖子的信息
+        userDownloadService.deleteByArticleId(id);
         //删除redis索引
         map.put("success",true);
         return map;

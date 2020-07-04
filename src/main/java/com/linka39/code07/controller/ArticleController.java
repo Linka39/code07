@@ -135,7 +135,7 @@ public class ArticleController {
             s_article.setState(2);
             s_article.setArcType(article.getArcType());//获取同资源类型
             hotArticleList = articleService.list(s_article,1,43, Sort.Direction.DESC,"publishDate");
-            redisUtil.lSet(hKey,hotArticleList);
+            redisUtil.lSet(hKey,hotArticleList,10*60);
         }
 
         mav.addObject("hotArticleList",hotArticleList);

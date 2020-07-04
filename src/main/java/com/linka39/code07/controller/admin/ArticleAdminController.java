@@ -2,13 +2,12 @@ package com.linka39.code07.controller.admin;
 
 import com.linka39.code07.entity.Article;
 import com.linka39.code07.entity.Link;
+import com.linka39.code07.entity.Message;
 import com.linka39.code07.init.InitSystem;
 import com.linka39.code07.lucene.ArticleIndex;
-import com.linka39.code07.service.ArticleService;
-import com.linka39.code07.service.CommentService;
-import com.linka39.code07.service.LinkService;
-import com.linka39.code07.service.UserDownloadService;
+import com.linka39.code07.service.*;
 import com.linka39.code07.util.DateUtil;
+import com.linka39.code07.util.RedisUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +46,10 @@ public class ArticleAdminController {
     private CommentService commentService;
     @Autowired
     private UserDownloadService userDownloadService;
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private RedisUtil<Article> redisUtil;
 
     /**
      * 生成所有帖子的索引
@@ -176,16 +180,23 @@ public class ArticleAdminController {
     public Map<String,Object> updateState(Article article)throws Exception{
         Map<String,Object> map = new HashMap<>();
         Article oldArticle = articleService.get(article.getId());
+        Message message = new Message();
+        message.setUser(oldArticle.getUser());
+        message.setPublishDate(new Date());
         // todo 消息模块要添加一个
         if(article.getState()==2){
             oldArticle.setState(2);
+            message.setContent("【审核通过】:您发布的帖子《"+oldArticle.getName()+"》审核通过！");
             articleIndex.addIndex(oldArticle);
         }else{
             //todo 删除redis首页数据缓存
+            redisUtil.del("article_"+oldArticle.getId());
             oldArticle.setState(3);
+            message.setContent("【审核失败】:您发布的帖子《"+oldArticle.getName()+"》审核未通过！原因是："+article.getReason());
             oldArticle.setReason(article.getReason());
         }
         articleService.save(oldArticle);
+        messageService.save(message);
         map.put("success",true);
         return map;
     }
@@ -202,6 +213,7 @@ public class ArticleAdminController {
         articleService.delete(id);
         //todo 删除该帖子下的所有评论
         //todo 删除redis索引
+        redisUtil.del("article_"+id);
         commentService.deleteByArticleId(id);
         userDownloadService.deleteByArticleId(id);
         //todo 删除索引
@@ -224,6 +236,7 @@ public class ArticleAdminController {
             commentService.deleteByArticleId(Integer.parseInt(idStr[i]));
             userDownloadService.deleteByArticleId(Integer.parseInt(idStr[i]));
             //todo 删除redis索引
+            redisUtil.del("article_"+Integer.parseInt(idStr[i]));
             //todo 删除索引
             articleIndex.deleteIndex(String.valueOf(idStr[i]));
         }
