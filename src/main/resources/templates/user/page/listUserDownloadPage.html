@@ -1,0 +1,17 @@
+<meta charset="UTF-8"/>
+<div id="f" xmlns:th="http://www.thymeleaf.org">
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>系统消息列表</legend>
+	</fieldset>
+	<div class="listUserDownload">
+		<ul th:each="userDownload:${userDownloadList}">
+			<li>
+				<font color="blue" th:text="'【'+${#dates.format(userDownload.downloadDate,'yyyy-MM-dd HH:mm')}+'】'"></font>
+				下载了：
+				<a target="_blank" th:href="'/article/'+${userDownload.article.id}" th:title="${userDownload.article.name}"
+				   th:text="${#strings.length(userDownload.article.name)}>37?${#strings.substring(userDownload.article.name,0,38)}:${userDownload.article.name}"></a>
+			</li>
+		</ul>
+		<div align="center" style="padding-top: 20px" th:utext="${pageCode}"></div>
+	</div>
+</div>

@@ -21,7 +21,7 @@ public class UserDownload {
 
     @ManyToOne
     @JoinColumn(name = "articleId")
-    private Article article;//下载资源类别
+    private Article article;//下载资源
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date downloadDate;//下载日期
