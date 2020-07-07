@@ -72,6 +72,17 @@ public class ArticleUserController {
         return mav;
     }
     /**
+     * 跳转到帖子管理页面
+     * @return
+     */
+    @RequestMapping("/toUnUsefulArticleManagePage")
+    public ModelAndView toUnUsefulArticleManagePage(){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("title","失效帖子管理页面");
+        mav.setViewName("user/unuserfulArticleManage");
+        return mav;
+    }
+    /**
      * 跳转到帖子修改
      * @return
      */
@@ -98,6 +109,25 @@ public class ArticleUserController {
         Long count = articleService.getTotal(s_article);
         map.put("code",0);
         map.put("count",count);
+        map.put("data",articleList);
+        return map;
+    }
+    /**
+     * 根据条件分页查询失效帖子信息
+     * @return
+     */
+    @RequestMapping("/unuserfulList")
+    @ResponseBody
+    public Map<String,Object> unuserfulList(Article s_article,HttpSession session, @RequestParam(value="page",required = false)Integer page,@RequestParam(value="limit",required = false)Integer limit)throws Exception{
+        User user = (User) session.getAttribute("currentUser");
+        s_article.setUser(user);
+        s_article.setUseful(false);
+        Map<String,Object> map = new HashMap<>();
+        List<Article> articleList = articleService.list(s_article,page,limit, Sort.Direction.DESC,"publishDate");
+        Long count = articleService.getTotal(s_article);
+        map.put("code",0);
+        map.put("count",count);
+        session.setAttribute("unUserfulCount",count);
         map.put("data",articleList);
         return map;
     }
@@ -139,6 +169,7 @@ public class ArticleUserController {
             //修改Lucene索引，redis缓存中删除这个索引
             articleIndex.updateIndex(oldArticle);
         }
+        oldArticle.setUseful(true);
         articleService.save(oldArticle);
         ModelAndView mav = new ModelAndView();
         mav.addObject("title","修改帖子成功页面");
