@@ -36,7 +36,7 @@ public class QuartzJobFactory extends AdaptableJobFactory {
         System.out.println("springScheduled run:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
     }
 
-    @Scheduled(cron = "0 39 11 * * ?")//每天中午12点触发
+    @Scheduled(cron = "0 0 12 * * ?")//每天中午12点触发，检查资源链接有效性
     //@Scheduled 注解内不能有参数
     public void testLinkUseful(){
         List<Article> articleList = articleService.listAll();

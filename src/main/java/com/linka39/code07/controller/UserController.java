@@ -7,10 +7,7 @@ import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.VaptchaMessage;
 import com.linka39.code07.service.MessageService;
 import com.linka39.code07.service.UserService;
-import com.linka39.code07.util.CryptographyUtil;
-import com.linka39.code07.util.DateUtil;
-import com.linka39.code07.util.PageUtil;
-import com.linka39.code07.util.StringUtil;
+import com.linka39.code07.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -38,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -51,6 +49,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private RedisUtil<Integer> redisUtil;
 
     @Autowired
     private UserService userService;
@@ -320,5 +320,37 @@ public class UserController {
     public Boolean isVip(HttpSession session){
         User user = (User) session.getAttribute("currentUser");
         return user.getVip();
+    }
+    @ResponseBody
+    @RequestMapping("/sign")
+    //HttpServletRequest获取application
+    public Map<String,Object> sign(HttpSession session,HttpServletRequest request)throws Exception{
+        User oldUser = (User) session.getAttribute("currentUser");
+        Map<String,Object> map = new HashMap<>();
+        if(oldUser==null){
+            map.put("success",false);
+            map.put("errorInfo","当前客户未登录");
+            return map;
+        }
+        if(oldUser.getSign()){
+            map.put("success",false);
+            map.put("errorInfo","你已经签过到了，不能重复签呀");
+            return map;
+        }
+        ServletContext application=request.getServletContext();
+        Integer signTotal = (Integer) redisUtil.get("signTotal");
+        redisUtil.set("signTotal", signTotal+1);
+        application.setAttribute("signTotal", signTotal+1);
+        //信息更新到数据库
+        User user = userService.findById(oldUser.getId());
+        user.setSign(true);
+        user.setSignTime(new Date());
+        user.setSignSort(signTotal+1);
+        user.setPoints(user.getPoints()+1);
+        userService.save(user);
+        //用户缓存更新
+        session.setAttribute("currentUser", user);
+        map.put("success", true);
+        return map;
     }
 }

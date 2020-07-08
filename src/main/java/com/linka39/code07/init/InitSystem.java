@@ -4,7 +4,9 @@ import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.Link;
 import com.linka39.code07.service.ArcTypeService;
 import com.linka39.code07.service.LinkService;
+import com.linka39.code07.util.RedisUtil;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.Sort;
@@ -26,6 +28,8 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
 
     private static ApplicationContext applicationContext;
     public static Map<Integer,ArcType> arcTypeMap = new HashMap<Integer,ArcType>();
+    @Autowired
+    private RedisUtil<Integer> redisUtil;
     /**
      * 加载数据到application缓存中
      * @param application
@@ -42,6 +46,14 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
         }
         application.setAttribute("allArcTypeList",allArcTypeList);
         application.setAttribute("allLinkList",allLinkList);
+        if(redisUtil.get("signTotal")!=null){
+            //项目一启动就设置
+            Integer signTotal = (Integer) redisUtil.get("signTotal");
+            application.setAttribute("signTotal",signTotal);
+        }else{
+            redisUtil.set("signTotal",0);
+            application.setAttribute("signTotal",0);
+        }
     }
     @Override
     public void contextInitialized(ServletContextEvent sce) {

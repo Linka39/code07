@@ -98,3 +98,16 @@ function IsURL (str_url) {
         return (false);
     }
 }
+
+function sign() {
+    $.get("/user/sign"
+            ,{}
+            ,function (ret) {
+            if(!ret.success){
+                alert(ret.errorInfo);
+            }else{
+                alert("签到成功!");
+                window.location.reload();
+            }
+        })
+}

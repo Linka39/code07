@@ -15,5 +15,6 @@ public interface UserService {
    public User findById(Integer id);
    public List<User> list(User s_user, Integer page, Integer pageSize, Direction direction, String...properties );
    public Long getTotal(User s_user);
+   public void updateAllSignInfo();
 }
 

@@ -3,6 +3,7 @@ package com.linka39.code07.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -14,11 +15,13 @@ import java.util.Date;
 @Entity
 //前后端都需要进行校验，前端是为了减少后端压力，后端是为了防止post请求发送校验
 @Table(name = "t_user")
+@Transactional
 public class User implements Serializable {
     @Id //设为主键
     @GeneratedValue//设置自动生成
     private Integer id; //编号
 
+    //为了在session中读写方便而加的字段
     private Integer messageCount;//未查看消息记录数
 
     @NotEmpty(message = "请输入用户名！")
@@ -40,6 +43,10 @@ public class User implements Serializable {
     private boolean isOff=false;    //是否被封禁
     private String roleName="会员";    //角色名称，会员 管理员两种，默认会员
     private Date registerDate;  //用户注册日期
+
+    private Boolean isSign=false;   //是否签到，默认否
+    private Date signTime;//签到时间
+    private Integer signSort;// 签到顺序，第几个签的
 
     public Integer getId() {
         return id;
@@ -127,5 +134,29 @@ public class User implements Serializable {
 
     public void setMessageCount(Integer messageCount) {
         this.messageCount = messageCount;
+    }
+
+    public Boolean getSign() {
+        return isSign;
+    }
+
+    public void setSign(Boolean sign) {
+        isSign = sign;
+    }
+
+    public Date getSignTime() {
+        return signTime;
+    }
+
+    public void setSignTime(Date signTime) {
+        this.signTime = signTime;
+    }
+
+    public Integer getSignSort() {
+        return signSort;
+    }
+
+    public void setSignSort(Integer signSort) {
+        this.signSort = signSort;
     }
 }

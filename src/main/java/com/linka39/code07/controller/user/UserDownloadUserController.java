@@ -49,7 +49,6 @@ public class UserDownloadUserController {
         User user= (User) session.getAttribute("currentUser");
         UserDownload s_userDownload=new UserDownload();
         s_userDownload.setUser(user);
-        user.setMessageCount(0);
         session.setAttribute("currentUser",user);//重置session
         List<UserDownload> userDownloadList =userDownloadService.list(s_userDownload,page,10, Sort.Direction.DESC,"downloadDate");
         Long total = userDownloadService.getTotal(s_userDownload);
