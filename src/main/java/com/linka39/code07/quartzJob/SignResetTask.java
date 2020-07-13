@@ -1,6 +1,5 @@
 package com.linka39.code07.quartzJob;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

@@ -8,7 +8,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/code07?serverTimezone=GMT&characterEncoding=utf8
+    url: jdbc:mysql://39.106.83.5:3306/code07?serverTimezone=GMT&characterEncoding=utf8
     username: root
     password: 123456
   #    password: XXX
@@ -19,4 +19,11 @@ spring:
   thymeleaf:
     cache: false
 
-userImageFilePath: E://my_project/code07/userImage/
+userImageFilePath: /home/code07/userImage/
+
+articleImageFilePath: /home/code07/uploadImage/
+
+lucenePath: /home/code07/myLucene
+
+quartzname: test
+quartzpath: com.linka39.code07.quartzJob.
