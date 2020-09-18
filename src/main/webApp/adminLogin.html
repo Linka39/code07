@@ -1,212 +1,415 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-<title>管理员登陆-Linka39</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>管理员登陆平台</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+	<link rel='stylesheet' id='camera-css'  href='/static/login2/css/camera.css' media='all'>
+	<script src="/static/login2/live2d.min.js"></script>
+	<script type='text/javascript' src='/static/login2/scripts/jquery.min.js'></script>
+	<script src="/static/js/jquery-1.7.2.js"></script>
+	<script type='text/javascript' src='/static/login2/scripts/jquery.mobile.customized.min.js'></script>
+	<script type='text/javascript' src='/static/login2/scripts/jquery.easing.1.3.js'></script>
+	<script type='text/javascript' src='/static/login2/scripts/camera.min.js'></script>
 
-<link rel="stylesheet" href="/static/login/bootstrap.min.css" />
-<link rel="stylesheet" href="/static/login/css/camera.css" />
-<link rel="stylesheet" href="/static/login/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="/static/login/matrix-login.css" />
-<link rel="stylesheet" href="/static/login/font-awesome.css" />
-<script type="text/javascript" src="/static/login/js/jquery-1.5.1.min.js"></script>
-<!-- 软键盘控件start -->
-<link href="/static/login/keypad/css/framework/form.css" rel="stylesheet" type="text/css"/>
-<!-- 软键盘控件end -->
- <style type="text/css">
-    /*
-   body{
-    -webkit-transform: rotate(-3deg);
-    -moz-transform: rotate(-3deg);
-    -o-transform: rotate(-3deg);
-	padding-top:20px;
-    }
-    */
-      .cavs{
-    	z-index:1;
-    	position: fixed;
-    	width:95%;
-    	margin-left: 20px;
-    	margin-right: 20px;
-    }
-  </style>
-  <script>
-  		//window.setTimeout(showfh,3000);
-  		var timer;
-		function showfh(){
-			fhi = 1;
-			//关闭提示晃动屏幕，注释掉这句话即可
-			timer = setInterval(xzfh2, 10);
-		};
-		var current = 0;
-		function xzfh(){
-			current = (current)%360;
-			document.body.style.transform = 'rotate('+current+'deg)';
-			current ++;
-			if(current>360){current = 0;}
-		};
-		var fhi = 1;
-		var current2 = 1;
-		function xzfh2(){
-			if(fhi>50){
-				document.body.style.transform = 'rotate(0deg)';
-				clearInterval(timer);
-				return;
-			}
-			current = (current2)%360;
-			document.body.style.transform = 'rotate('+current+'deg)';
-			current ++;
-			if(current2 == 1){current2 = -1;}else{current2 = 1;}
-			fhi++;
-		};
-	</script>
+	<style>
+		html, body {
+			height: 100%;
+		}
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding-top: 40px;
+			padding-bottom: 40px;
+		}
+		a {
+			color: #09f;
+		}
+
+		a:hover {
+			text-decoration: none;
+		}
+
+		#back_to_camera {
+			clear: both;
+			display: block;
+			height: 40px;
+			line-height: 40px;
+			padding: 20px;
+			position: relative;
+			z-index: 1;
+		}
+
+		.fluid_container {
+			bottom: 0;
+			height: 100%;
+			left: 0;
+			position: fixed;
+			right: 0;
+			top: 0;
+			z-index: 0;
+		}
+
+		#camera_wrap_4 {
+			bottom: 0;
+			height: 100%;
+			left: 0;
+			margin-bottom: 0!important;
+			position: fixed;
+			right: 0;
+			top: 0;
+		}
+
+		.camera_bar {
+			z-index: 2;
+		}
+		.camera_prev, .camera_next, .camera_commands {
+			opacity: 0.5;
+		}
+		.camera_thumbs {
+			margin-top: -100px;
+			position: relative;
+			z-index: 1;
+		}
+		.camera_thumbs_cont {
+			border-radius: 0;
+			-moz-border-radius: 0;
+			-webkit-border-radius: 0;
+		}
+
+		.camera_overlayer {
+			opacity: .1;
+		}
+		.form-signin {
+			z-index: 2;
+			position: fixed;
+			width: 100%;
+			max-width: 330px;
+			padding: 15px;
+			margin: 0 auto;
+		}
+		.form-signin .checkbox {
+			font-weight: 400;
+		}
+		.form-signin .form-control {
+			position: relative;
+			box-sizing: border-box;
+			height: auto;
+			padding: 10px;
+			font-size: 16px;
+		}
+		.form-signin .form-control:focus {
+			z-index: 2;
+		}
+		.form-signin input[type=text] {
+			margin-bottom: -1px;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+		.form-signin input[type=password] {
+			margin-bottom: 10px;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+		#stage {
+			position: relative;
+		}
+		#stage img {
+			width: 100%;
+			margin-bottom: 20px;
+			border-radius: 20px;
+		}
+		#stage a {
+			position: absolute;
+			width: 2em;
+			height: 2em;
+			border-radius: 50%;
+		}
+		#inner {
+			position: relative;
+			background-color: #d8c4cb;
+			clip-path: circle(120px at center);
+			-webkit-clip-path: circle(120px at center);
+		}
+		#cover {
+			position: absolute;
+			background-color: #CB3837;
+			width: 100%;
+			height: 100%;
+			bottom: 10%;
+			transition: all 1s;
+			box-shadow: 0 0 0 5px rgba(0, 0, 0, .1);
+		}
+		#text {
+			position: absolute;
+			bottom: 30%;
+			font-size: 2em;
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0.4;
+			font-weight: bold;
+		}
+		#detail {
+			position: absolute;
+			background: rgba(255, 255, 255, .1);
+			width: 100%;
+			height: 10px;
+			bottom: 0;
+		}
+		#handle {
+			position: absolute;
+			background: #ccc;
+			bottom: -2px;
+			box-shadow: 0 1px 0 1px rgba(0, 0, 0, .1);
+			height: 8px;
+			left: 50%;
+			margin-left: -15px;
+			width: 30px;
+			cursor: pointer;
+		}
+		#info {
+			left: 40px;
+			bottom: 20px;
+		}
+		#refresh {
+			right: 40px;
+			bottom: 20px;
+		}
+		#live2d {
+			cursor: grab;
+			height: 300px;
+			width: 300px;
+		}
+		#live2d:active {
+			cursor: grabbing;
+		}
+	</style>
 </head>
-<body>
+<body class="text-center">
 
-	<!--小键盘承载器-->
-	<canvas class="cavs"></canvas>
-	<div style="width:100%;text-align: center;margin: 0 auto;position: absolute;">
-		<!-- 登录 -->
-		<div id="windows1">
-		<div id="loginbox" >
-			<form action="" method="post" name="myForm" id="loginForm">
-				<div class="control-group normal_text">
-					<h3>
-						<img src="static/login/logo.png" alt="Logo" />
-					</h3>
+<div class="fluid_container">
+	<div class="camera_wrap camera_emboss pattern_1" id="camera_wrap_4">
+		<div  data-src="/static/login2/images/slides/bridge.jpg">
+		</div>
+		<div data-src="/static/login2/images/slides/leaf.jpg">
+		</div>
+		<div  data-src="/static/login2/images/slides/road.jpg">
+		</div>
+		<div data-src="/static/login2/images/slides/sea.jpg">
+		</div>
+		<div data-src="/static/login2/images/slides/shelter.jpg">
+		</div>
+		<div data-src="/static/login2/images/slides/tree.jpg">
+		</div>
+	</div><!-- #camera_wrap_3 -->
+</div><!-- .fluid_container -->
+<form class="form-signin" action="login.php" method="post">
+	<div id="stage">
+		<div id="inner">
+			<div id="cover">
+				<div id="text">
+					<span style="color: cyan">LIN</span><span style="color: white;"> KA39</span>
 				</div>
-				<div class="control-group">
-					<div class="controls">
-						<div class="main_input_box">
-							<span class="add-on bg_lg">
-							<i><img height="37" src="static/login/user.png" /></i>
-							</span><input type="text" name="userName" id="userName" value="" placeholder="请输入用户名" />
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<div class="main_input_box">
-							<span class="add-on bg_ly">
-							<i><img height="37" src="static/login/suo.png" /></i>
-							</span><input type="password" name="password" id="password" placeholder="请输入密码" class="keypad" keypadMode="full" allowKeyboard="true" value=""/>
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<div id="vaptchaContainer" class="main_input_box" style="padding: 20px;padding-top: 0px;padding-bottom: 0px;">
-							<!--vaptcha-container是用来引入VAPTCHA的容器，下面代码为预加载动画，仅供参考-->
-							<div class="vaptcha-init-main">
-								<div class="vaptcha-init-loading">
-									<a href="/" target="_blank">
-										<img src="https://r.vaptcha.net/public/img/vaptcha-loading.gif" />
-									</a>
-									<span class="vaptcha-text">Vaptcha启动中...</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-actions">
-					<div style="width:86%;padding-left:8%;">
-
-						<span class="pull-right"><a onclick="submitData();" class="flip-link btn btn-info" id="to-recover">登录</a></span>
-					</div>
-				</div>
-			</form>
+				<div id="detail"></div>
+				<div id="handle"></div>
+			</div>
+			<canvas class="mb-4" id="live2d" width="800" height="800"></canvas>
+		</div>
+		<a id="info" href="javascript:info()"><i class="fa fa-lg fa-info"></i></a>
+		<a id="refresh" href="javascript:refresh()"><i class="fa fa-lg fa-refresh"></i></a>
+	</div>
+	<h1 class="h3 mb-3 font-weight-normal" style="color: #f6f6f6">ADMIN SERVER</h1>
+	<label class="sr-only">用户名</label>
+	<input type="text" id="userName"  class="form-control" placeholder="用户名" required autofocus>
+	<label class="sr-only">密码</label>
+	<input type="password" id="password"  class="form-control" placeholder="密码" required>
+	<div class="checkbox mb-3">
+		<div class="control-group">
 			<div class="controls">
-				<div class="main_input_box">
-					<font color="white"><span id="nameerr">Copyright © Linka39  2020-2020</span></font>
+				<div id="vaptchaContainer" class="main_input_box" style="padding: 20px;padding-top: 0px;padding-bottom: 0px;">
+					<!--vaptcha-container是用来引入VAPTCHA的容器，下面代码为预加载动画，仅供参考-->
+					<div class="vaptcha-init-main">
+						<div class="vaptcha-init-loading">
+							<a href="/" target="_blank">
+								<img src="https://r.vaptcha.net/public/img/vaptcha-loading.gif" />
+							</a>
+							<span class="vaptcha-text">Vaptcha启动中...</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		</div>
-		</div>
+	</div>
+	<button class="btn btn-lg btn-primary btn-block" onclick="submitData()">登录</button>
+	<p class="mt-5 mb-3" style="color: #f6f6f6">Copyleft &copy; Linka-39 2020</p>
+</form>
 
-	</div>
-	<div id="templatemo_banner_slide" class="container_wapper">
-		<div class="camera_wrap camera_emboss" id="camera_slide">
-			<!-- 背景图片 -->
-			<div data-src="static/login/images/banner_slide_01.jpg"></div>
-			<div data-src="static/login/images/banner_slide_02.jpg"></div>
-			<div data-src="static/login/images/banner_slide_03.jpg"></div>
-			<div data-src="static/login/images/banner_slide_04.jpg"></div>
-			<div data-src="static/login/images/banner_slide_05.jpg"></div>
-		</div>
-		<!-- #camera_wrap_3 -->
-	</div>
-	<script src="https://v.vaptcha.com/v3.js"></script>
-	<script type="text/javascript">
-		function submitData(){
-			var userName=$("#userName").val();
-			var password=$("#password").val();
-			if(userName==""){
-				alert("请输入用户名!");
-				$("#userName").focus();
-				return;
-			}
-			if(password==""){
-				alert("请输入密码！");
-				$("#password").focus();
-				return;
-			}
-			if($("input[name=vaptcha_token]").val()==""){
-				alert("请进行人机验证！");
-				return false;
-			}
-			$.post("/user/login",
-					{
-						userName:$("#userName").val().trim(),
-						password:$("#password").val().trim(),
-						vaptcha_token:$("input[name=vaptcha_token]").val()
-					},
-					function(result){
-						if(result.success){
-							window.location.href="/toAdminUserCenterPage";
-						}else{
-							if('人机验证失败！'==result.errorInfo){
-								alert('人机验证失败！');
-								window.location.reload();
-							}
-						}
-					},"json");
+
+<script src="https://v.vaptcha.com/v3.js"></script>
+<script type="text/javascript">
+	function submitData(){
+		let userName=$("#userName").val();
+		var password=$("#password").val();
+		if(userName==""){
+			alert("请输入用户名!");
+			$("#userName").focus();
+			return;
 		}
-		vaptcha({
-			vid: "5ee0b346e7b3ff69253970f6", // 验证单元id
-			type: "click", // 显示类型 点击式
-			scene: 0, // 场景值 默认0
-			container: "#vaptchaContainer", // 容器，可为Element 或者 selector
-			offline_server: "http://dd.linka39.top/", //离线模式服务端地址，若尚未配置离线模式，请填写任意地址即可。
-		}).then(function (vaptchaObj) {
-			obj = vaptchaObj; //将VAPTCHA验证实例保存到局部变量中
-			vaptchaObj.render(); // 调用验证实例 vpObj 的 render 方法加载验证按钮
-			vaptchaObj.renderTokenInput('.login-form')//以form的方式提交数据时，使用此函数向表单添加token值
-			//关闭验证弹窗时触发
-			vaptchaObj.listen("close", function () {
-				//验证弹窗关闭触发
-			});
+		if(password==""){
+			alert("请输入密码！");
+			$("#password").focus();
+			return;
+		}
+		if($("input[name=vaptcha_token]").val()==""){
+			alert("请进行人机验证！");
+			return false;
+		}
+		$.post("/user/login",
+				{
+					userName:$("#userName").val().trim(),
+					password:$("#password").val().trim(),
+					vaptcha_token:$("input[name=vaptcha_token]").val()
+				},
+				function(result){
+					if(result.success){
+						window.location.href="/toAdminUserCenterPage";
+					}else{
+						if('人机验证失败！'==result.errorInfo){
+							alert('人机验证失败！');
+							window.location.reload();
+						}
+					}
+				},"json");
+	}
+	vaptcha({
+		vid: "5ee0b346e7b3ff69253970f6", // 验证单元id
+		type: "click", // 显示类型 点击式
+		scene: 0, // 场景值 默认0
+		container: "#vaptchaContainer", // 容器，可为Element 或者 selector
+		offline_server: "http://dd.linka39.top/", //离线模式服务端地址，若尚未配置离线模式，请填写任意地址即可。
+	}).then(function (vaptchaObj) {
+		obj = vaptchaObj; //将VAPTCHA验证实例保存到局部变量中
+		vaptchaObj.render(); // 调用验证实例 vpObj 的 render 方法加载验证按钮
+		vaptchaObj.renderTokenInput('.login-form')//以form的方式提交数据时，使用此函数向表单添加token值
+		//关闭验证弹窗时触发
+		vaptchaObj.listen("close", function () {
+			//验证弹窗关闭触发
 		});
+	});
 
 
 	//js  日期格式
-	</script>
+</script>
+<script type="text/javascript">
+	jQuery(function(){
+		jQuery('#camera_wrap_4').camera({
+			height: 'auto',
+			loader: 'bar',
+			pagination: false,
+			thumbnails: false,
+			hover: false,
+			opacityOnGrid: false,
+			imagePath: '/static/login2/images/'
+		});
+	});
+</script>
+<script>
 
-	<script src="/static/js/jquery-1.7.2.js"></script>
-	<script src="/static/login/js/camera.min.js"></script>
-	<script src="/static/login/js/templatemo_script.js"></script>
-	<script src="/static/login/js/ban.js"></script>
-	<script type="text/javascript" src="/static/js/jQuery.md5.js"></script>
-	<script type="text/javascript" src="/static/js/jquery.tips.js"></script>
-	<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+	/*
+     * _(:з」∠)_
+     * Created by Shuqiao Zhang in 2019.
+     * https://zhangshuqiao.org
+     */
 
-	<!-- 软键盘控件start -->
-	<script type="text/javascript" src="/static/login/keypad/js/form/keypad.js"></script>
-	<script type="text/javascript" src="/static/login/keypad/js/framework.js"></script>
-	<!-- 软键盘控件end -->
+	/*
+     * This program is free software: you can redistribute it and/or modify
+     *  it under the terms of the GNU General Public License as published by
+     *  the Free Software Foundation, either version 3 of the License, or
+     *  (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     *  GNU General Public License for more details.
+     */
+	window.addEventListener("load", () => {
+		"use strict";
 
+		if (!CSS.supports("clip-path", "circle(120px at center)") && !CSS.supports("-webkit-clip-path", "circle(120px at center)")) {
+			document.getElementById("stage").innerHTML = '<img src="/static/login2/assets/screenshot-1.png">';
+			return;
+		}
+
+		let apiPath = "https://live2d.fghrsh.net/api", state = 0,
+				modelId = localStorage.getItem("modelId"),
+				modelTexturesId = localStorage.getItem("modelTexturesId");
+		if (modelId === null) {
+			modelId = 1;
+			modelTexturesId = 53;
+		}
+		loadModel(modelId, modelTexturesId);
+
+		function loadModel(modelId, modelTexturesId) {
+			localStorage.setItem("modelId", modelId);
+			if (modelTexturesId === undefined) modelTexturesId = 0;
+			localStorage.setItem("modelTexturesId", modelTexturesId);
+			loadlive2d("live2d", `${apiPath}/get/?id=${modelId}-${modelTexturesId}`, null);
+			console.log("live2d", `模型 ${modelId}-${modelTexturesId} 加载完成`);
+			setTimeout(() => {
+				coverPosition("80%");
+				state = 2;
+			}, 2000);
+		}
+
+		function loadRandModel() {
+			const modelId = localStorage.getItem("modelId"),
+					modelTexturesId = localStorage.getItem("modelTexturesId");
+			fetch(`${apiPath}/rand_textures/?id=${modelId}-${modelTexturesId}`)
+					.then(response => response.json())
+					.then(result => {
+						loadModel(modelId, result.textures.id);
+						setTimeout(() => {
+							state = 2;
+							coverPosition("80%");
+							document.getElementById("refresh").setAttribute("href", "javascript:refresh()");
+						}, 1000);
+					});
+		}
+
+		function loadOtherModel() {
+			const modelId = localStorage.getItem("modelId");
+			fetch(`${apiPath}/switch/?id=${modelId}`)
+					.then(response => response.json())
+					.then(result => {
+						loadModel(result.model.id);
+					});
+		}
+
+		function coverPosition(pos) {
+			document.getElementById("cover").style.bottom = pos;
+		}
+
+		window.refresh = function() {
+			state = 0;
+			coverPosition("10%");
+			document.getElementById("refresh").setAttribute("href", "javascript:void(0)");
+			setTimeout(loadRandModel, 1000);
+		};
+
+		document.getElementById("handle").addEventListener("click", () => {
+			if (state === 1) {
+				state = 2;
+				coverPosition("80%");
+			}
+			else if (state === 2) {
+				state = 1;
+				coverPosition("20%");
+			}
+		});
+	});
+</script>
 </body>
-
 </html>

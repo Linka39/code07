@@ -138,7 +138,7 @@ public class UserAdminController {
     public String logout(HttpSession session){
         //底层就是清除session
         SecurityUtils.getSubject().logout();
-        return "redirect:/adminLogin.html";
+        return "redirect:/admin";
     }
 
 }

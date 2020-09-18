@@ -25,5 +25,7 @@ articleImageFilePath: /home/code07/uploadImage/
 
 lucenePath: /home/code07/myLucene
 
+bgImagePath: /home/code07/slides/
+
 quartzname: test
 quartzpath: com.linka39.code07.quartzJob.

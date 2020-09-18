@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${title}+'-Java1234下载'"></title>
+    <title th:text="${title}+'-Lika39下载'"></title>
     <link rel="stylesheet" href="/static/layui/css/layui.css" />
     <link rel="stylesheet" href="/static/css/css.css" />
 </head>
@@ -12,6 +12,8 @@
         <div class="layui-logo"><a href="/toAdminUserCenterPage" style="color: gray">Linka39-后台管理</a></div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item"><a href="javascript:history.back(-1)"><i class="layui-icon layui-icon-return">&nbsp;&nbsp;返回上一页</i></a></li>
+            <li class="layui-nav-item"><a href="javascript:;">
+                    <b id="time"></b></a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img" th:text="${session.currentUser.userName}"></img>
@@ -37,6 +39,7 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:;">系统管理</a>
                     <dl class="layui-nav-child">
+                        <dd><a href="javascript:openPage('changeBGImage.html')">背景图片管理</a></dd>
                         <dd><a href="javascript:genAllIndex()">生成所有帖子索引</a></dd>
                         <dd><a href="javascript:showModifyPasswordDialog();">修改密码</a></dd>
                         <dd><a href="javascript:logout();">安全退出</a></dd>
@@ -47,7 +50,7 @@
     </div>
 
     <div class="layui-body">
-        <iframe id="pageFrame" frameborder="0" scrolling="auto" style="width:100%;height:98%" src="/admin/default.html"></iframe>
+        <iframe id="pageFrame" frameborder="0" scrolling="auto" style="width:100%;height:98%" src="/admin/bgImage/towelcom"></iframe>
     </div>
 
     <div class="layui-footer">
@@ -61,12 +64,32 @@
 <script>
     /*<![CDATA[*/
     layui.use(['element','laypage','form'], function(){
-        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+        var element = layui.element; // 导航的hover效果、二级菜单等功能，需要依赖element模块
         var $ = layui.jquery; // 使用jquery
         var laypage = layui.laypage;
         var tMenu='t_0';
         $("#"+tMenu).css("color","red");
     });
+
+    var t = setInterval(printTime,1000);
+
+    function printTime(){
+
+        //clearTimeout(t);//清除定时器
+        let dt = new Date();
+        let y=dt.getYear()+1900;
+        let mm=dt.getMonth()+1;
+        let d=dt.getDate();
+        let weekday=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+        let day=dt.getDay();
+        let h=dt.getHours();
+        let m=dt.getMinutes();
+        let s=dt.getSeconds();
+        if(h<10){h="0"+h;}
+        if(m<10){m="0"+m;}
+        if(s<10){s="0"+s;}
+        document.getElementById("time").innerHTML =  "日期："+y+"年"+mm+"月"+d+"日"+" "+weekday[day]+" "+h+":"+m+":"+s+"";
+    }
 
     function submitData(){
         var q=$("#q").val();

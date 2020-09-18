@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>js文字开场百叶窗特效</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<style type="text/css">
+    .blur {
+        filter: url(blur.svg#blur); /* FireFox, Chrome, Opera */
+        -webkit-filter: blur(5px); /* Chrome, Opera */
+        -moz-filter: blur(5px);
+        -ms-filter: blur(5px);
+        filter: blur(5px);
+        filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=false); /* IE6~IE9 */
+    }
+</style>
+<body>
+<div id="bg_pic" style="position:absolute; width:100%; height:100%; z-index:-1">
+    <!-- <img id="myimg" src="morning.jpg" alt="backgroundpicture"  class="blur" width="100%" height="100%">-->
+</div>
+<div class="container">
+    <h1 id="sayhi" class="effect1"></h1>
+    <p id="time"></p></div>
+<section>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+</section>
+<script src='anime.min.js'></script>
+<script src="script.js"></script>
+<script type="text/javascript">
+    var userName = "linka39";
+    window.onload=CurrentTime;
+    function CurrentTime(){
+        var now = new Date();
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+        var hh = now.getHours();            //时
+        var mm = now.getMinutes();          //分
+
+        var clock = year + " - ";
+        if(month < 10)
+            clock += "0";
+        clock += month + " - ";
+        if(day < 10)
+            clock += "0";
+        clock += day + "&nbsp;&nbsp;&nbsp;";
+        if(hh < 10)
+            clock += "0";
+        clock += hh + " : ";
+        if (mm < 10)
+            clock += '0';
+        clock += mm;
+        document.getElementById("time").innerHTML=clock;
+        if(hh>=6&&hh<=11){
+            document.getElementById("sayhi").innerHTML="上午好啊, "+ userName;
+            document.getElementById("myimg").src="morning.jpg";
+        }
+        else if(hh>=13&&hh<=17){
+            document.getElementById("sayhi").innerHTML="下午好啊, "+ userName;
+            document.getElementById("myimg").src="noon.jpg";
+        }
+        else if(hh==12){
+            document.getElementById("sayhi").innerHTML="中午好啊, "+ userName;
+            document.getElementById("myimg").src="afternoon.jpeg";
+        }
+        else{
+            document.getElementById("sayhi").innerHTML="晚上好啊, "+ userName;
+            document.getElementById("myimg").src="night.jpg";
+        }
+    }
+</script>
+</body>
+</html>

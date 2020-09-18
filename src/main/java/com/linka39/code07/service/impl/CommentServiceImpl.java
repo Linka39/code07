@@ -1,13 +1,8 @@
 package com.linka39.code07.service.impl;
 
 import com.linka39.code07.entity.Comment;
-import com.linka39.code07.entity.User;
-import com.linka39.code07.entity.UserDownload;
 import com.linka39.code07.repository.CommentRepository;
-import com.linka39.code07.repository.UserDownloadRepository;
 import com.linka39.code07.service.CommentService;
-import com.linka39.code07.service.UserDownloadService;
-import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

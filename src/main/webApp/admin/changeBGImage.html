@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>背景图片管理</title>
+	<link rel="stylesheet" href="/static/layui/css/layui.css"></link>
+	<link rel="stylesheet" href="/static/css/css.css"></link>
+	<link rel="stylesheet" href="/static/viewer/css/viewer.min.css">
+</head>
+<style>
+	img{
+		cursor: pointer;
+	}
+	/*	.layui-table-cell{
+            height: 80px;
+            line-height: 28px;
+            padding: 0 15px;
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }*/
+</style>
+<body>
+
+
+<div style="padding: 20px">
+	        <span class="layui-breadcrumb">
+			  <a>首页</a>
+			  <a><cite>背景图片管理</cite></a>
+			</span>
+	<div style="padding-top: 20px;">
+		<div>
+			<div style="padding-left: 20px">
+				<button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm" data-type="batchdel" onclick="toPreview()">预览画面</button>
+				<button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" data-type="batchdel" onclick="toInit()">初始化图片</button>
+				<button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger" data-type="batchdel" onclick="toPreviewCss()">预览拼图碎片</button>
+			</div>
+
+		</div>
+		<div id="picUrl">
+			<table id="BgimgListTable" ></table>
+		</div>
+	</div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/common.js"></script>
+<script src="/static/viewer/js/viewer.min.js"></script>
+<script type="text/javascript">
+	var viewer;
+
+	layui.use(['element','form','table'], function(){
+		var form=layui.form;
+		var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+		$ = layui.jquery; // 使用jquery
+		table = layui.table;
+
+		table.render({
+			elem: '#BgimgListTable'
+			,url:'/admin/bgImage/list'
+			,cols: [
+				[
+					{type:'numbers'}
+					,{type:'checkbox'}
+					,{field: 'imgUrl', title: '背景图片',align:'center',width:330, templet:formatBGImages}
+					,{field:'name',width:320, title: '图片描述'}
+					,{field:'updateDate', width:220, title: '修改日期',align:'center'}
+					,{field:'action', width:150, title: '操作',align:'center',templet:formatAction}
+				]
+			]
+			,page: true
+			,done: function (){
+				$("img").parent().each(function () {
+					$(this).removeClass("layui-table-cell");
+				});
+				viewer = new Viewer(document.getElementById('picUrl'), {
+					url: 'data-original'
+				});
+			}
+		});
+	});
+
+
+
+
+	function toPreview(){
+		window.open("/admin/bgImage/topreview","_blank","toolbar=yes, location=yes, scrollbars=yes, width=1400, height=750, top=0,left=0 ,resizable=yes");
+	}
+
+	function toInit(){
+		//获取复选框节点
+		var checkStatus = table.checkStatus('BgimgListTable');
+		var initCount = checkStatus.data.length;
+		if(initCount ==0){
+			layer.msg("请选择要初始化的数据！");
+			return;
+		}
+		var strIds=[];
+		var rows=checkStatus.data;
+		for(var i =0;i<initCount;++i){
+			strIds.push(rows[i].id);
+		}
+		var ids=strIds.join(",");
+		layer.confirm("您确定要初始化这<font color=red>"+ initCount +"</font> 个背景图片吗？", {
+			title:"系统提示"
+			,btn: ['确定','取消'] //按钮
+		}, function(){
+			layer.closeAll('dialog');
+			$.post("/admin/bgImage/init",{"ids":ids},function(result){
+				if(result.success){
+					layer.msg("初始化成功！");
+					table.reload("BgimgListTable",{});
+				}else{
+					layer.msg("初始化失败，请联系管理员！");
+				}
+			},"json");
+		}, function(){
+
+		});
+	}
+
+	function modifyArcType(id){
+		layer.open({
+			type: 2,
+			title: '修改资源类别',
+			area: ['500px', '550px'],
+			content: '/admin/saveBgImage.html?id='+id //iframe的url
+		});
+	}
+
+
+	function formatAction(d){
+		return "<button class='layui-btn layui-btn-normal layui-btn-xs' onclick='modifyArcType("+d.id+")'><i class='layui-icon layui-icon-edit'></i>编辑</button>";
+	}
+
+	function formatBGImages(d){
+		return "<img  data-original='/loginImages/"+d.imgUrl+"' src='/loginImages/thumbs/"+d.imgUrl+"'>";
+	}
+
+	function toPreviewCss() {
+		$("#pageFrame",window.parent.document).attr("src","https://www.webhek.com/apps/species-in-pieces/#");
+	}
+
+
+</script>
+</body>
+</html>

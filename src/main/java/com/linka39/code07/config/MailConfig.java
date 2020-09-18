@@ -29,7 +29,7 @@ public class MailConfig {
         mailSender.setHost("smtp.qq.com");//指定用来发送Email的邮件服务器主机名
         mailSender.setPort(587);//默认端口，标准的SMTP端口
         mailSender.setUsername("1203440758@qq.com");//用户名
-        mailSender.setPassword("qobpwviopuycbaad");//密码,输入smtp的授权码
+        mailSender.setPassword("glgttctvvihefeje");//密码,输入smtp的授权码
         return mailSender;
 	}
 	//邮箱测试

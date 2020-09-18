@@ -82,10 +82,10 @@ public class UserController {
         }else if(StringUtils.isEmpty(user.getPassword().trim())){
             map.put("success",false);
             map.put("errorInfo","请输入密码！");
-        } else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
+        } /*else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
             map.put("success", false);
             map.put("errorInfo", "人机验证失败！");
-        }else{//登陆成功
+        }*/else{//登陆成功
             Subject subject = SecurityUtils.getSubject();
             //加密，将字段转换为token,subject相当于shiro的一个门，确认角色的身份
             //两个参数,userName,passWord
@@ -106,7 +106,6 @@ public class UserController {
                     map.put("success",true);
                     request.getSession().setAttribute("currentUser",currentUser);
                 }
-
             }catch (Exception e){
                 e.printStackTrace();
                 map.put("success", false);
@@ -137,10 +136,10 @@ public class UserController {
         }else if(userService.findByEmail(user.getEmail())!=null) {
             map.put("success", false);
             map.put("errorInfo", "邮箱已存在，请更换！");
-        } else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
+        }/* else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
             map.put("success", false);
             map.put("errorInfo", "人机验证失败！");
-        } else{
+        } */else{
             user.setPassword(CryptographyUtil.md5(user.getPassword(),CryptographyUtil.SALT));
             user.setRegisterDate(new Date());
             user.setImageName("default.jpg");

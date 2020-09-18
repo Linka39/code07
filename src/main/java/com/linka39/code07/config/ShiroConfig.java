@@ -47,6 +47,7 @@ public class ShiroConfig {
         // 配置不会被拦截的链接(不需要权限) 顺序判断
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/admin", "anon");
+        filterChainDefinitionMap.put("/admin2", "anon");
         filterChainDefinitionMap.put("/login.html", "anon");
         filterChainDefinitionMap.put("/register.html", "anon");
         filterChainDefinitionMap.put("/findPassword.html", "anon");
@@ -60,6 +61,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/comment/**", "anon");
         filterChainDefinitionMap.put("/image/**", "anon");
         filterChainDefinitionMap.put("/userImage/**", "anon");
+        filterChainDefinitionMap.put("/loginImages/**", "anon");
         filterChainDefinitionMap.put("/adminLogin.html", "anon");
         filterChainDefinitionMap.put("/toVipPage", "anon");
         filterChainDefinitionMap.put("/toDeclarePage", "anon");

@@ -1,8 +1,10 @@
 package com.linka39.code07.init;
 
 import com.linka39.code07.entity.ArcType;
+import com.linka39.code07.entity.BgImage;
 import com.linka39.code07.entity.Link;
 import com.linka39.code07.service.ArcTypeService;
+import com.linka39.code07.service.BgImageService;
 import com.linka39.code07.service.LinkService;
 import com.linka39.code07.util.RedisUtil;
 import org.springframework.beans.BeansException;
@@ -38,12 +40,15 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
         //通过Service注解的名字来获取Service
         ArcTypeService arcTypeService = (ArcTypeService) applicationContext.getBean("arcTypeService");
         LinkService linkService = (LinkService) applicationContext.getBean("linkService");
+        BgImageService bgImageService = (BgImageService) applicationContext.getBean("bgImageService");
         //在上下文启动时初始化一个系统变量
+        List<BgImage> allBgImageList = bgImageService.listAll(Sort.Direction.ASC,"id");
         List<ArcType> allArcTypeList = arcTypeService.listAll(Sort.Direction.ASC,"sort");
         List<Link> allLinkList = linkService.listAll(Sort.Direction.ASC,"sort");
         for(ArcType arcType:allArcTypeList){
             arcTypeMap.put(arcType.getId(),arcType);
         }
+        application.setAttribute("allBgImageList",allBgImageList);
         application.setAttribute("allArcTypeList",allArcTypeList);
         application.setAttribute("allLinkList",allLinkList);
         if(redisUtil.get("signTotal")!=null){
