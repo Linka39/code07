@@ -54,7 +54,7 @@ public class Article implements Serializable {
 
     private boolean isHot=false;    //是否为热门资源
 
-    private Integer state;  //审核状态  1:未审核，2：审核通过，3：审核未通过
+    private Integer state;  //审核状态  1:未审核，2：审核通过，3：审核未通过，4：敏感性审核
 
     private String reason;  //审核未通过原因
     private Date checkDate; //审核日期

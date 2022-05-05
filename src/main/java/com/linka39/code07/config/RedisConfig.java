@@ -24,7 +24,8 @@ import redis.clients.jedis.JedisPoolConfig;
 @PropertySource("classpath:config/redis.properties")
 public class RedisConfig {
 
-	@Value("${redis.maxIdle}")
+	// "${redis.maxIdle:100}"，表示如果不存在就使用默认值100
+	@Value("${redis.maxIdle:100}")
 	private Integer maxIdle;
 
 	@Value("${redis.maxTotal}")

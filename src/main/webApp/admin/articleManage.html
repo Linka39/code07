@@ -45,6 +45,7 @@
 							        <option value="1">未审核</option>
 							        <option value="2">审核通过</option>
 							        <option value="3">审核未通过</option>
+									  <option value="4">敏感性审核</option>
 							      </select>
 							    </div>
 				            </div>
@@ -204,16 +205,21 @@
 
 	function formatState(d){
 		if(d.state==1){
-			return "<button class='layui-btn layui-btn-danger layui-btn-xs' onclick='reviewArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>待审核</button>";
+			return "<button class='layui-btn layui-btn-warm layui-btn-xs' onclick='reviewArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>待审核</button>";
 		}else if(d.state==2){
 			return "<font color=blue>审核通过</font>";
 		}else if(d.state==3){
 			return "<a href='#' title='审核未通过原因："+d.reason+"''><font color=red>审核未通过</font></a><br/>";
+		}else if(d.state==4){
+			return "<button class='layui-btn layui-btn-danger layui-btn-xs' onclick='reviewSensitiveArticle("+d.id+")'><i class='layui-icon layui-icon-edit'></i>敏感性审核</button>";
 		}
 	}
     function reviewArticle(id){
         window.location.href="/admin/article/toReViewArticlePage/"+id;
     }
+	function reviewSensitiveArticle(id){
+		window.location.href="/admin/article/toReViewSensitiveArticlePage/"+id;
+	}
     function modifyArticle(id){
         window.location.href="/admin/article/toModifyArticlePage/"+id;
     }

@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>修改字典参数</title>
+<link rel="stylesheet" href="/static/layui/css/layui.css"></link>
+<style type="text/css">
+
+	table tr td{
+		padding: 10px;
+	}
+
+</style>
+</head>
+<body>
+<div style="padding: 20px">
+	<form method="post">
+		<table>
+			<tr>
+				<td>字典代码：</td>
+				<td><input type="text" id="zddm" name="zddm" class="layui-input" style="width: 300px" disabled></td>
+			</tr>
+			<tr>
+				<td>字典名称：</td>
+				<td><input type="text" id="zdmc" name="zdmc" class="layui-input" style="width: 300px" disabled></td>
+			</tr>
+			<tr>
+				<td><font style="color: red;margin-right: 3px;">*</font>字典值：</td>
+				<td>
+					<input id="zdz" name="zdz" class="layui-input" style="width: 300px"></input>
+				</td>
+			</tr>
+			<tr>
+				<td><font style="color: red;margin-right: 3px;">*</font>字典值名称：</td>
+				<td>
+					<input id="zdnote" name="zdnote" class="layui-input" style="width: 300px"></input>
+				</td>
+			</tr>
+			<tr>
+				<td><font style="color: red;margin-right: 3px;">*</font>字典值名称：</td>
+				<td>
+					<input id="zdnote" name="zdnote" class="layui-input" style="width: 300px"></input>
+				</td>
+			</tr>
+			<tr>
+				<td><button class="layui-btn" onclick="submitData();return false;">提交</button></td>
+				<td><font id="errorInfo" color="red"></font></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<script src="/static/js/jquery.js"></script>
+<script type="text/javascript">
+
+	var dicArr;
+
+	function submitData(){
+		// var zddm=$("#zddm").val().trim();
+		// var zdmc=$("#zdmc").val().trim();
+		var zdz=$("#zdz").val().trim();
+		var zdnote=$("#zdnote").val().trim();
+		if(zdz=="") {
+	　　　　     　　 $("#errorInfo").text("请输入字典值！");
+			  $("#zdz").focus();
+	　　　　　　      return false;
+	　　　}
+		if(zdnote=="") {
+	　　　　     　　 $("#errorInfo").text("请输入字典值名称！");
+			  	$("#zdnote").focus();
+	　　　　　　      return false;
+	　　　}
+
+	   var id=getQueryVariable("id");
+	   if(id){
+		   $.post("/admin/Dic/save",
+			   {zdz:zdz,zdnote:zdnote},
+               function(result){
+			  if(result.success){
+				  alert("修改成功！");
+				  parent.reloadPage();
+			  }else{
+				  $("#errorInfo").text(result.errorInfo);
+			  }
+		  },"json");
+	   }else{
+		   $.post("/admin/Dic/save",
+				   {zdz:zdz,zdnote:zdnote},
+               function(result){
+				  if(result.success){
+					  alert("添加成功！");
+					  parent.reloadPage();
+				  }else{
+					  $("#errorInfo").text(result.errorInfo);
+				  }
+			  },"json");
+	   }
+	}
+	//通过链接获取id的工具类
+	function getQueryVariable(variable){
+		//window.location.search的变量为"?id=20"
+	       var query = window.location.search.substring(1);
+	       var vars = query.split("&");
+	       for (var i=0;i<vars.length;i++) {
+	               var pair = vars[i].split("=");
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+	}
+
+	$(function(){
+		var id=getQueryVariable("id");
+		if(id){
+			$.post("/admin/Dic/findById",
+					{id:id},
+					function(result){
+				  if(result.success){
+					  var dic=result.dic;
+					  $("#zddm").val(dic.zddm);
+					  $("#zdmc").val(dic.zdmc);
+					  $("#zdz").val(dic.zdz);
+					  $("#zdnote").val(dic.zdnote);
+				  }else{
+					  alert("服务器加载有问题，请联系管理员！");
+				  }
+			  },"json");
+		}
+	});
+
+
+</script>
+</body>
+</html>

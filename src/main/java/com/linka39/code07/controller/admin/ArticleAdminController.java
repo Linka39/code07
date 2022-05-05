@@ -8,6 +8,7 @@ import com.linka39.code07.lucene.ArticleIndex;
 import com.linka39.code07.service.*;
 import com.linka39.code07.util.DateUtil;
 import com.linka39.code07.util.RedisUtil;
+import com.linka39.code07.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ import java.util.Map;
 public class ArticleAdminController {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private SensitiveArticleService sensitiveArticleService;
     @Autowired
     private InitSystem initSystem;
     @Value("${articleImageFilePath}")
@@ -88,6 +91,8 @@ public class ArticleAdminController {
             articleIndex.updateIndex(oldArticle);
            //todo 修改Lucene索引，redis缓存中删除这个索引
         }
+        redisUtil.set("article_"+oldArticle.getId(),oldArticle,10*60);
+        articleIndex.updateIndex(oldArticle);
         articleService.save(oldArticle);
         ModelAndView mav = new ModelAndView();
         mav.addObject("title","修改帖子成功页面");
@@ -153,6 +158,23 @@ public class ArticleAdminController {
         mav.setViewName("admin/reviewArticle");
         return mav;
     }
+
+    /**
+     * 跳转到帖子审核页面
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/toReViewSensitiveArticlePage/{id}")
+    @RequiresPermissions(value = {"跳转到异常帖子审核页面"})//设置权限
+    public ModelAndView toReViewSensitiveArticlePage(@PathVariable(value = "id") Integer id){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("title","审核帖子页面");
+        mav.addObject("article",articleService.get(id));
+        mav.addObject("sensitiveArticle",sensitiveArticleService.findByArticleId(id));
+        mav.setViewName("admin/reviewSensitiveArticle");
+        return mav;
+    }
+
     /**
      * 跳转到帖子修改页面
      * @return
@@ -185,6 +207,10 @@ public class ArticleAdminController {
         message.setPublishDate(new Date());
         // todo 消息模块要添加一个
         if(article.getState()==2){
+            if(oldArticle.getState()==4){
+                String contentStr = oldArticle.getContent();
+                oldArticle.setContent(StringUtil.replaceStartTag(contentStr));
+            }
             oldArticle.setState(2);
             message.setContent("【审核通过】:您发布的帖子《"+oldArticle.getName()+"》审核通过！");
             articleIndex.addIndex(oldArticle);

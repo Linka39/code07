@@ -1,0 +1,5 @@
+all.txt是所有的数据
+test.txt是训练数据
+predict.txt是预测的数据
+dataBase.txt是通过数据库导入生成的数据
+JCTree_Result.txt是通过决策树代码生成的决策树

@@ -23,12 +23,12 @@ public class Comment {
     @JoinColumn(name = "articleId")
     private Article article;//评论帖子
 
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String content;    //名称
 
     private Date commentDate;   //评论日期
     //防止灌水
-    private Integer state;//评论审核状态 0-未审核 1-通过 2-未通过
+    private Integer state;//评论审核状态 0-异常 1-通过 2-未通过
 
     public Integer getId() {
         return id;

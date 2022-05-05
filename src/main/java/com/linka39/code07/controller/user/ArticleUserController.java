@@ -9,6 +9,7 @@ import com.linka39.code07.service.CommentService;
 import com.linka39.code07.service.UserDownloadService;
 import com.linka39.code07.service.UserService;
 import com.linka39.code07.util.DateUtil;
+import com.linka39.code07.util.RedisUtil;
 import com.linka39.code07.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class ArticleUserController {
     private ArticleIndex articleIndex;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private RedisUtil<Article> redisUtil;
     /**
      * 跳转到发布帖子页面
      * @return
@@ -147,6 +150,8 @@ public class ArticleUserController {
         article.setView(StringUtil.randomInteger());
         ModelAndView mav = new ModelAndView();
         articleService.save(article);
+        redisUtil.set("article_"+article.getId(),article,10*60);
+        articleIndex.updateIndex(article);
         mav.addObject("title","发布帖子成功页面");
         mav.setViewName("user/publishArticleSuccess");
         return mav;
@@ -171,6 +176,8 @@ public class ArticleUserController {
         }
         oldArticle.setUseful(true);
         articleService.save(oldArticle);
+        redisUtil.set("article_"+oldArticle.getId(),oldArticle,10*60);
+        articleIndex.updateIndex(oldArticle);
         ModelAndView mav = new ModelAndView();
         mav.addObject("title","修改帖子成功页面");
         mav.setViewName("user/publishArticleSuccess");

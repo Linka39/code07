@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
                 Predicate predicate = cb.conjunction();
                 if( s_comment!=null){
                     if(s_comment.getState()!=null){
-                        predicate.getExpressions().add(cb.equal(root.get("state"),s_comment.getState()));
+                        predicate.getExpressions().add(cb.notEqual(root.get("state"),s_comment.getState()));
                     }
                     if(s_comment.getArticle()!=null&&s_comment.getArticle().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("article").get("id"),s_comment.getArticle().getId()));
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
                 Predicate predicate = cb.conjunction();
                 if( s_comment!=null){
                     if(s_comment.getState()!=null){
-                        predicate.getExpressions().add(cb.equal(root.get("state"),s_comment.getState()));
+                        predicate.getExpressions().add(cb.notEqual(root.get("state"),s_comment.getState()));
                     }
                     if(s_comment.getArticle()!=null&&s_comment.getArticle().getId()!=null){
                         predicate.getExpressions().add(cb.equal(root.get("article").get("id"),s_comment.getArticle().getId()));

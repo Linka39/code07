@@ -25,7 +25,7 @@ public class CryptographyUtil {
 	}
 
 	public static void main(String[] args) {
-		String password="0818";
+		String password="111";
 		String encrypPass=CryptographyUtil.md5(password, SALT);
 		System.out.println("Md5加密："+encrypPass);
 		System.out.println("解密密码："+CryptographyUtil.decryMd5(password, SALT));

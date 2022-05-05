@@ -24,7 +24,7 @@
 			          <button class="layui-btn layuiadmin-btn-list" data-type="batchdel" onclick="deleteSelected()">删除</button>
 			    	</div>
 			    </div>
-			    <div>
+			    <div class="Mysensitive2">
 				    <table width="100%" id="commentListTable" ></table>
 			    </div>
 			</div>
@@ -85,11 +85,11 @@
 
 	function formatState(d){
 		if(d.state==0){
-			return "<font color=green>待审核</font>";
+			return "<strong style='color: green'>敏感性评论</strong>";
 		}else if(d.state==1){
-			return "<font color=blue>审核通过</font>";
+			return "<strong style='color: blue' >审核通过</strong>";
 		}else if(d.state==2){
-			return "<font color=red>审核未通过</font>";
+			return "<strong style='color: red' >审核未通过</strong>";
 		}
 	}
 

@@ -23,7 +23,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	registry.addResourceHandler("/userImage/**").addResourceLocations("file:E:\\my_project\\code07\\userImage\\");
 
       //可以实现数据与项目间的分离 生产端
-     /* registry.addResourceHandler("/loginImages/thumbs/**").addResourceLocations("file:/home/code07/slides/thumbs/");
+      /*registry.addResourceHandler("/loginImages/thumbs/**").addResourceLocations("file:/home/code07/slides/thumbs/");
      registry.addResourceHandler("/loginImages/**").addResourceLocations("file:/home/code07/slides/");
       registry.addResourceHandler("/image/**").addResourceLocations("file:/home/code07/uploadImage/");
       registry.addResourceHandler("/userImage/**").addResourceLocations("file:/home/code07/userImage/");*/

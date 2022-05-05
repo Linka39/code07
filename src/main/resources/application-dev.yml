@@ -8,7 +8,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/code07?serverTimezone=GMT&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/code007?serverTimezone=GMT&characterEncoding=utf8
     username: root
     password: 123456
   #    password: XXX
@@ -25,6 +25,11 @@ articleImageFilePath: E://my_project/code07/uploadImage/
 
 lucenePath: E://my_project/code07/myLucene
 bgImagePath: E://my_project/code07/slides/
+sensitivePath: E://my_project/code07/src/main/resources/config/sensitiveWords.txt
+stopWordsPath: E://my_project/code07/src/main/resources/config/stopWords.txt
+
+bayesianPath: E://my_project/code07/src/main/resources/config/bayesianFile/
+jctreePath: E://my_project/code07/src/main/resources/config/jctreeFile/
 
 quartzname: test
 quartzpath: com.linka39.code07.quartzJob.

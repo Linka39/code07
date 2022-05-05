@@ -32,7 +32,10 @@
       			</tr>
       			<tr>
       				<td valign="top">资源描述：</td>
-      				<td th:utext="${article.content}"></td>
+      				<td class="Mysensitive2">
+						<div class="reviewDiv" th:utext="${article.content}">
+						</div>
+					</td>
       			</tr>
       			<tr>
       				<td valign="top">分享资源：</td>

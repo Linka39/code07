@@ -46,12 +46,12 @@ public class IndexController {
         return mav;
     }
 
-    @RequestMapping("/admin")
-    public ModelAndView toAdmin(){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("adminLogin");
-        return mav;
-    }
+//    @RequestMapping("/admin")
+//    public ModelAndView toAdmin(){
+//        ModelAndView mav = new ModelAndView();
+//        mav.setViewName("adminLogin");
+//        return mav;
+//    }
     @RequestMapping("/admin2")
     public ModelAndView toAdmin2(){
         ModelAndView mav = new ModelAndView();

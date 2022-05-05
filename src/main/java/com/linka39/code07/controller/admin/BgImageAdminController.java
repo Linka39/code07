@@ -126,7 +126,7 @@ public class BgImageAdminController {
                     tempObj.setName("高雅的路子");
                     break;
                 case 4:
-                    tempObj.setImgUrl("leaf.jpg");
+                    tempObj.setImgUrl("sea.jpg");
                     tempObj.setName("大海");
                     break;
                 case 5:
@@ -134,7 +134,7 @@ public class BgImageAdminController {
                     tempObj.setName("避难所");
                     break;
                 case 6:
-                    tempObj.setImgUrl("leaf.jpg");
+                    tempObj.setImgUrl("tree.jpg");
                     tempObj.setName("大树");
                     break;
                 case 1:
@@ -150,7 +150,6 @@ public class BgImageAdminController {
         map.put("success",true);
         return map;
     }
-
 
 
     /**

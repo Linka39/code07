@@ -36,7 +36,7 @@ public class CommentUserController {
     public Map<String,Object> save(Comment comment,HttpSession session)throws Exception{
         Map<String,Object> map = new HashMap<>();
         comment.setCommentDate(new Date());
-        comment.setState(0);//设置状态
+//        comment.setState(0);//设置状态
         //从session中获取用户信息可防止注入伪造
         comment.setUser((User) session.getAttribute("currentUser"));
         commentService.save(comment);
@@ -58,7 +58,7 @@ public class CommentUserController {
         Article s_article = new Article();
         s_article.setUser(user);
         s_comment.setArticle(s_article);
-        s_comment.setState(1);//审核通过的显示
+        s_comment.setState(2);//去掉审核不通过的
         List<Comment> commentList = commentService.list(s_comment,page,limit, Sort.Direction.DESC,"commentDate");
         Long count = commentService.getTotal(s_comment);
         map.put("code",0);

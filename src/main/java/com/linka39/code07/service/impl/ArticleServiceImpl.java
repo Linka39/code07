@@ -67,6 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
         },pageable);
         return pageArticle.getContent();
+        //todo 敏感词
     }
 
     @Override

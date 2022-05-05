@@ -70,7 +70,7 @@ public class StringUtil {
 	 */
 	public static String stripHtml(String content) {
 	    // <p>段落替换为换行
-	    content = content.replaceAll("<p .*?>", "\r\n");
+	    content = content.replaceAll("<p.*?>", "\r\n");
 	    // <br><br/>替换为换行
 	    content = content.replaceAll("<br\\s*/?>", "\r\n");
 	    // 去掉其它的<>之间的东西
@@ -78,6 +78,38 @@ public class StringUtil {
 	    // 去掉空格
 	    content = content.replaceAll(" ", "");
 	    return content;
+	}
+
+	/**
+	 * 替换敏感词中的内容
+	 * @param content
+	 * @return
+	 */
+	public static String replaceStartTag(String content) {
+		if (content == null || content.length() == 0) {
+			return content;
+		}
+//		String regEx = "<[a-zA-Z]*?>([\\s\\S]*?)";
+		String regEx = "<.?font>";
+		content = content.replaceAll(regEx, "");
+		return content;
+	}
+
+	/**
+	 * 获取替换字符串
+	 * @author zsh
+	 * @date 2021年4月20日 下午5:21:19
+	 * @param replaceChar
+	 * @param length
+	 * @return
+	 * @version 1.0
+	 */
+	public static  String getReplaceCharsUtil(String replaceChar,int length){
+		String resultReplace = replaceChar;
+		for(int i = 1 ; i < length ; i++){
+			resultReplace += replaceChar;
+		}
+		return resultReplace;
 	}
 
 	/**

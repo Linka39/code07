@@ -58,7 +58,7 @@ public class QuartzJobFactory extends AdaptableJobFactory {
                     message.setContent("【失效通知】:您发布的帖子《"+article.getName()+"》链接已经失效！");
                     messageService.save(message);
                     //todo 更新redis缓存10分钟时长，Index缓存，
-                    redisUtil.lSet("article_"+article.getId(),article,10*60);
+                    redisUtil.set("article_"+article.getId(),article,10*60);
                     articleIndex.updateIndex(article);
                     articleService.save(article);
                 }

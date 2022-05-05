@@ -2,6 +2,7 @@ package com.linka39.code07.controller.admin;
 
 import com.linka39.code07.entity.Comment;
 import com.linka39.code07.service.CommentService;
+import com.linka39.code07.util.StringUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -55,6 +56,10 @@ public class CommentAdminController {
     public Map<String,Object> updateState(Integer id,Boolean state)throws Exception{
         Comment oldComment = commentService.find(id);
         if(state){
+            if(oldComment.getState()==0){
+                String contentStr = oldComment.getContent();
+                oldComment.setContent(StringUtil.replaceStartTag(contentStr));
+            }
             oldComment.setState(1);
         }else{
             oldComment.setState(2);

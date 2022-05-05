@@ -141,7 +141,8 @@ public class ArticleController {
         mav.addObject("hotArticleList",hotArticleList);
         Comment s_comment = new Comment();
         s_comment.setArticle(article);
-        s_comment.setState(1);//只展示审核通过的评论
+        s_comment.setState(2);//去掉审核不通过的
+        //todo 敏感词
         mav.addObject("commentCount",commentService.getTotal(s_comment));
         mav.addObject("article",article);
         mav.addObject("title",article.getName());

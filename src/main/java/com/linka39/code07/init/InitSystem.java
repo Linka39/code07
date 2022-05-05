@@ -1,5 +1,6 @@
 package com.linka39.code07.init;
 
+import com.linka39.code07.config.SensitivePathConfig;
 import com.linka39.code07.entity.ArcType;
 import com.linka39.code07.entity.BgImage;
 import com.linka39.code07.entity.Link;
@@ -13,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.wltea.analyzer.core.IKSegmenter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -32,6 +34,9 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
     public static Map<Integer,ArcType> arcTypeMap = new HashMap<Integer,ArcType>();
     @Autowired
     private RedisUtil<Integer> redisUtil;
+
+    @Autowired
+    private SensitivePathConfig sensitivePathConfig;
     /**
      * 加载数据到application缓存中
      * @param application
@@ -51,6 +56,15 @@ public class InitSystem implements ServletContextListener, ApplicationContextAwa
         application.setAttribute("allBgImageList",allBgImageList);
         application.setAttribute("allArcTypeList",allArcTypeList);
         application.setAttribute("allLinkList",allLinkList);
+
+        sensitivePathConfig.initSensitiveWordMap();//初始化敏感词库sensitiveWordMap
+        sensitivePathConfig.initStopWord();//初始化停顿词库stopSet
+        sensitivePathConfig.initJCTree();//初始化决策树JCTree.rootNode
+        sensitivePathConfig.getJCTreeSuccessful();//决策树打印测试
+        sensitivePathConfig.initTextWordsMap();//初始化贝叶斯分类器TrainSampleDataManager.allWordsMap
+        sensitivePathConfig.initIKSegmenter();//初始化ik分词器IKSegmente
+        sensitivePathConfig.initSensitivePram();//初始化敏感词控制参数
+
         if(redisUtil.get("signTotal")!=null){
             //项目一启动就设置
             Integer signTotal = (Integer) redisUtil.get("signTotal");

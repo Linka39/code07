@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>敏感词管理</title>
+<link rel="stylesheet" href="/static/layui/css/layui.css"></link>
+<link rel="stylesheet" href="/static/css/css.css"></link>
+</head>
+<body>
+
+	<div style="padding: 20px">
+	        <span class="layui-breadcrumb">
+			  <a>首页</a>
+			  <a><cite>敏感词管理</cite></a>
+			</span>
+		    <div style="padding-top: 20px;">
+		        <div>
+		    	 <div style="padding: 20px;">
+		          	<div class="layui-form">
+			          <div class="layui-inline">
+						  <div class="layui-inline">
+							  <button class="layui-btn layuiadmin-btn-list" data-type="batchdel" onclick="addSensitiveWord()">添加</button>
+						  </div>
+
+						  <div class="layui-inline">
+							  <button class="layui-btn layuiadmin-btn-list" data-type="batchdel" onclick="deleteSelected()">删除</button>
+						  </div>
+
+			            <div class="layui-input-inline">
+							<label class="layui-form-label" style="width: 130px;">敏感词类别：</label>
+							<div class="layui-input-inline">
+								<select id="emotion" name="emotion" >
+								</select>
+							</div>
+
+						</div>
+						  <div class="layui-inline">
+							  <label class="layui-form-label">敏感词：</label>
+							  <div class="layui-input-inline">
+								  <input type="text" id="s_word"  placeholder="请输入" autocomplete="off" class="layui-input" onkeydown="if(event.keyCode==13) search()"/>
+							  </div>
+						  </div>
+
+						  &nbsp;&nbsp;
+						  <div class="layui-inline">
+							  <button class="layui-btn layuiadmin-btn-list"  lay-submit="" onclick="search()" lay-filter="LAY-app-contlist-search">
+								  <i class="layui-icon layui-icon-search layuiadmin-button-btn" ></i>
+							  </button>
+						  </div>
+			          </div>
+
+			        </div>
+		          </div>
+			    </div>
+			    <div>
+				    <table width="100%" id="wordListTable" ></table>
+			    </div>
+			</div>
+	  </div>
+
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script type="text/javascript">
+
+	var dicArr;
+
+	$(function(){
+		$.post("/admin/Dic/findByZddm",
+				{"zddm":"sensitive_class"},
+				function(result){
+					if(result.success){
+						var jfqhtml = '<option></option>';
+						dicArr = result.dic_list;
+						for(var i = 0;i<dicArr.length;i++){
+							var temp = dicArr[i];
+							jfqhtml += '<option value='+temp.zdz+ '>'+ temp.zdz+'-' +temp.zdnote+ '</option>';
+						}
+						$("#emotion").html(jfqhtml);
+					}else{
+						layer.msg("查找字典失败，请联系管理员！");
+					}
+				},"json");
+	});
+
+	layui.use(['element','form','table'], function(){
+	    var form=layui.form;
+		  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+		  $ = layui.jquery; // 使用jquery
+		  table = layui.table; //单独取table
+
+		  table.render({
+		    elem: '#wordListTable'
+		    ,url:'/admin/sensitiveWord/list'
+		    ,cols: [[
+			  {type:'checkbox'}
+		      ,{field:'word', title: '敏感词'}
+			  ,{field:'emotion', width:200, title: '敏感词类型',templet:formatWordClassName}
+		      ,{field:'updateDate', width:220, title: '敏感词更新日期', sort: true,align:'center'}
+		      ,{field:'emotionWeight', width:200, title: '敏感词权重',align:'center'}
+		      ,{field:'action', width:250, title: '操作',align:'center',templet:formatAction}
+		    ]]
+		    ,page: true
+		  });
+	});
+
+	function formatAction(d){
+		return "<button class='layui-btn layui-btn-normal layui-btn-xs' onclick='modifyArcType("+d.id+")'><i class='layui-icon layui-icon-edit'></i>编辑</button><button class='layui-btn layui-btn-warm layui-btn-xs' onclick='deleteOne("+d.id+")'><i class='layui-icon layui-icon-delete' ></i>删除</button>";
+	}
+
+	function search(){
+		var s_emotion=$("#emotion").val();
+		var word=$("#s_word").val();
+		table.reload("wordListTable",{
+			page:{
+				curr:1
+			}//起始分页
+			,where:{
+				emotion:s_emotion,
+				word:word
+			}//条件数据自动封入实体类
+		});
+	}
+
+	function formatWordClassName(d){
+		if(d.emotion==null){
+			return "";
+		}else{
+			if(d.emotion == 1){
+				return "反动01";
+			}else if(d.emotion == 2){
+				return "广告02";
+			}else if(d.emotion == 3){
+				return "色情03";
+			}else if(d.emotion == 4){
+				return "涉暴04";
+			}else if(d.emotion == 5){
+				return "民生05";
+			}
+		}
+	}
+
+	function formatUserName(d){
+		if(d.user==null){
+			return "";
+		}else{
+			return d.user.userName;
+		}
+	}
+
+	function deleteOne(id){
+		layer.confirm('您确定要删除这条记录吗？', {
+			title:"系统提示"
+			,btn: ['确定','取消'] //按钮
+		}, function(){
+			layer.closeAll('dialog');
+			$.post("/admin/sensitiveWord/delete",
+					{"id":id},
+					function(result){
+						if(result.success){
+							layer.msg("删除成功！");
+							table.reload("wordListTable",{});
+						}else{
+							layer.msg("删除失败，请联系管理员！");
+						}
+					},"json");
+		}, function(){
+
+		});
+	}
+
+	function deleteSelected(){
+		var checkStatus=table.checkStatus('wordListTable');
+		if(checkStatus.data.length==0){
+			layer.msg("请选择要删除的数据！");
+			return;
+		}
+		var strIds=[];
+		var rows=checkStatus.data;
+		for(var i=0;i<checkStatus.data.length;i++){
+			strIds.push(rows[i].id);
+		}
+		var ids=strIds.join(",");
+		layer.confirm("您确定要删除这<font color=red>"+checkStatus.data.length+"</font>条记录吗？", {
+			title:"系统提示"
+			,btn: ['确定','取消'] //按钮
+		}, function(){
+			layer.closeAll('dialog');
+			$.post("/admin/sensitiveWord/deleteSelected",
+					{"ids":ids},
+					function(result){
+						if(result.success){
+							layer.msg("删除成功！");
+							table.reload("wordListTable",{});
+						}else{
+							layer.msg("删除失败，请联系管理员！");
+						}
+					},"json");
+		}, function(){
+
+		});
+	}
+
+	function addSensitiveWord(){
+		layer.open({
+			type: 2,
+			title: '添加敏感词',
+			area: ['500px', '400px'],
+			content: '/admin/saveSensitiveWord.html' //iframe的url
+		});
+	}
+
+	function modifyArcType(id){
+		layer.open({
+			type: 2,
+			title: '修改资源类别',
+			area: ['500px', '400px'],
+			content: '/admin/saveSensitiveWord.html?id='+id //iframe的url
+		});
+	}
+
+
+
+</script>
+</body>
+</html>

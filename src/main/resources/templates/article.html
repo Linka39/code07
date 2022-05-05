@@ -88,7 +88,7 @@
                     <textarea id="commentContent" placeholder="请输入评论信息" class="layui-textarea"></textarea>
                     <button class="layui-btn layui-btn-radius  layui-btn-sm" onclick="submitData()">&nbsp;&nbsp;提交评论&nbsp;&nbsp;</button>
                 </div>
-                <div id="commentList" class="commentList"></div>
+                <div id="commentList" class="commentList Mysensitive"></div>
                 <div id="articlePage" class="articlePage"></div>
             </div>
             <div class="data_list" style="margin-top: 10px">
@@ -124,51 +124,23 @@
     </div>
     <div class="w1170" style="padding-top: 40px" th:include="common/foot::#f">
     </div>
+
+    <!--敏感词检测展示框-->
+    <div id="sensitivediv" class="hide">
+        <div>
+            <div class="Mysensitive" >
+                <table class="pure-table" id="sensitivediv2">
+
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 <!--thymleaf中取值要加 th:inline="javascript"-->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    layui.use(['element','form','laypage'], function(){
-        var element = layui.element;
-        var laypage = layui.laypage;
-        var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
-        $("#"+tMenu).css("color","red");
-
-        //调用分页
-        laypage.render({
-            elem: 'articlePage'
-            ,limit:6
-            ,count: [[${commentCount}]]
-            ,jump: function(obj){
-                $("#commentList").empty();
-                $.post("/comment/list",
-                    {"article.id":[[${article.id}]],
-                        "page":obj.curr},
-                function(result){
-                    var rows=result;
-                    if(rows.length==0){
-                        $("#commentList").html("<p align='center'>暂无评论</p>");
-                    }
-                    for(var i=0;i<rows.length;i++){
-                        var row=rows[i];
-                        $("#commentList").append("<div class='comment'>"+
-                            "<div class='left_img'>"+
-                            "<img src='/userImage/"+row.user.imageName+"' class='layui-nav-img'/>"+
-                            "</div>"+
-                            "<div class='right'>"+
-                            "<dt class='top'>"+
-                            row.user.userName+
-                            "<span class='time'>"+row.commentDate+"</span>"+
-                            "</dt>"+
-                            "<dd class='bottom'>"+row.content+"</dd>"+
-                            "</div>"+
-                            "</div>");
-                    }
-                },"json");
-            }
-        });
-
-    });
+    layerPageInit();
+    var userName = [[${session.currentUser.userName}]];
     // 相关资源加载
     $.post("/article/loadRelatedResources",
         {"q":[[${article.name}]]},
@@ -187,6 +159,54 @@
                 "</li>");
         }
     },"json");
+    function layerPageInit() {
+        layui.use(['element','form','laypage'], function(){
+            var element = layui.element;
+            var laypage = layui.laypage;
+            var tMenu = [[${session.tMenu}]];   //类似于jsp中${}
+            $("#"+tMenu).css("color","red");
+
+            //调用分页
+            laypage.render({
+                elem: 'articlePage'
+                ,limit:6
+                ,count: [[${commentCount}]]
+                ,jump: function(obj){
+                    $("#commentList").empty();
+                    $.post("/comment/list",
+                        {"article.id":[[${article.id}]],
+                            "page":obj.curr},
+                        function(result){
+                            var rows=result;
+                            if(rows.length==0){
+                                $("#commentList").html("<p align='center'>暂无评论</p>");
+                            }
+                            for(var i=0;i<rows.length;i++){
+                                var row=rows[i];
+                                var deleteHtml = "";
+                                if(userName == row.user.userName){
+                                    deleteHtml = "<a style='color: red;' onclick='deleteOne("+row.id+")'>Delete</a>"
+                                }
+
+                                $("#commentList").append("<div class='comment'>"+
+                                    "<div class='left_img'>"+
+                                    "<img src='/userImage/"+row.user.imageName+"' class='layui-nav-img'/>"+
+                                    "</div>"+
+                                    "<div class='right'>"+
+                                    "<dt class='top'>"+
+                                    row.user.userName+
+                                    "<span class='time'>"+row.commentDate+"</span>"+ deleteHtml +
+                                    "</dt>"+
+                                    "<dd class='bottom'>"+row.content+"</dd>"+
+                                    "</div>"+
+                                    "</div>");
+                            }
+                        },"json");
+                }
+            });
+
+        });
+    }
     function submitData(){
         // 下载过这个资源才可以评论
         if([[${session.currentUser}]]==null){
@@ -204,20 +224,99 @@
                     layer.msg("请输入评论信息！");
                     return;
                 }
-                $.post("/user/comment/save",
-                    {"article.id":[[${article.id}]],
-                        "content":content},
-                function(result){
-                    if(result.success){
-                        $("#commentContent").val("");
-                        layer.msg("评论成功，稍后显示！");
-                    }
-                },"json");
+                // 新增敏感词改造
+                // 判断内容哦个中是否包含敏感词
+                $.post("/Sensitive/sensitiveWordExist",
+                    {"text":content},
+                    function(json){
+                        if(json.code > 0){ // 包含敏感词
+                            //处理html展示
+                            var sensitivediv=$("#sensitivediv2");
+                            sensitivediv.html("");
+                            var html="";
+                            var senArr = json.result;
+                            html+="<tr><th>涉及敏感词：</th><td>";
+                            for(var i=0;i<senArr.length;i++){
+                                html+="[\"<font>"+senArr[i]+"</font>\"]";
+                                if(i<senArr.length -1)
+                                    html += "，";
+                            }
+                            html+="</td></tr>";
+
+                            html+="<tr><th>敏感词数量：</th><td><font>"+senArr.length+"</font></td></tr>";
+                            html+="<tr> <th>提示：</th><td><b>只有评论者发表者才能看到高亮敏感词详细信息，敏感词将以高亮展示，用户可以选择对其删除。\n" +
+                                " 其他用户下的高红字体不可视。</b></td></tr>";
+                            sensitivediv.append(html);
+                            layer.open({
+                                type: 1,
+                                title: '敏感词评论页面',
+                                shadeClose: true,
+                                shade: 0.8,
+                                async : true,
+                                area: ['720px', '400px'],
+                                content: $("#sensitivediv").html(),
+                                btn: ['确认', '取消'],
+                                btn1: function (index, layero) {
+                                    layer.close(index);//关闭弹窗
+                                    for(var i=0;i<senArr.length;i++){
+                                        content = content.replaceAll(senArr[i],"<font>"+senArr[i]+"</font>");
+                                    };
+                                    $.post("/user/comment/save",
+                                        {"article.id":[[${article.id}]],
+                                            "state":0,
+                                            "content":content},
+                                        function(result){
+                                            if(result.success){
+                                                $("#commentContent").val("");
+                                                layer.msg("评论成功！");
+                                                layerPageInit();
+                                            }
+                                        },"json");
+                                },
+                                btn2: function (index) {
+                                    return;
+                                }
+                            });
+                        }else{
+                            $.post("/user/comment/save",
+                                {"article.id":[[${article.id}]],
+                                    "state":1,
+                                    "content":content},
+                                function(result){
+                                    if(result.success){
+                                        $("#commentContent").val("");
+                                        layer.msg("评论成功！");
+                                        layerPageInit();
+                                    }
+                                },"json");
+                        }
+                    },"json");
 
             }else{  // 未下载过
                 layer.msg("下载该资源后才能评论！");
             }
         },"json");
+    }
+
+    function deleteOne(id){
+        layer.confirm('您确定要删除这条记录吗？', {
+            title:"系统提示"
+            ,btn: ['确定','取消'] //按钮
+        }, function(){
+            layer.closeAll('dialog');
+            $.post("/user/comment/delete",
+                {"id":id},
+                function(result){
+                    if(result.success){
+                        layer.msg("删除成功！");
+                        layerPageInit();
+                    }else{
+                        layer.msg("删除失败，请联系管理员！");
+                    }
+                },"json");
+        }, function(){
+
+        });
     }
 
     function download(){

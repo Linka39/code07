@@ -45,7 +45,7 @@ public class MyRealm extends AuthorizingRealm{
 			info.addStringPermission("修改帖子");
 			info.addStringPermission("图片上传");
 			info.addStringPermission("删除帖子");
-			info.addStringPermission("跳转到帖子审核页面");
+
 			info.addStringPermission("修改状态");
 			info.addStringPermission("修改热门状态");
 
@@ -68,6 +68,20 @@ public class MyRealm extends AuthorizingRealm{
 			info.addStringPermission("添加或者修改友情链接");
 			info.addStringPermission("删除友情链接");
 			info.addStringPermission("根据id查询友情链接实体");
+
+
+			info.addStringPermission("分页查询敏感词信息");
+			info.addStringPermission("添加或者修改敏感词");
+			info.addStringPermission("删除敏感词");
+			info.addStringPermission("根据id查询敏感词实体");
+
+			info.addStringPermission("分页查询字典参数信息");
+			info.addStringPermission("添加或者修改字典参数");
+			info.addStringPermission("删除字典参数");
+			info.addStringPermission("根据id查询字典参数实体");
+
+			info.addStringPermission("跳转到帖子审核页面");
+			info.addStringPermission("跳转到异常帖子审核页面");
 
 			info.addStringPermission("修改管理员密码");
 			info.addStringPermission("安全退出");
