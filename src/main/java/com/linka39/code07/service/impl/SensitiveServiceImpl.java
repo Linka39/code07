@@ -115,7 +115,7 @@ public class SensitiveServiceImpl implements SensitiveService {
         if (set.size() == 0) {
             json.put("code", "-101");
         }else{
-            json.put("result", set.toString());
+            json.put("result", set);
         }
         return json;
     }

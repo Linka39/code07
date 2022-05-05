@@ -81,10 +81,10 @@ public class UserController {
         }else if(StringUtils.isEmpty(user.getPassword().trim())){
             map.put("success",false);
             map.put("errorInfo","请输入密码！");
-        } /*else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
+        } else if(vaptchaCheck(vaptcha_token,request.getRemoteHost())==false) {
             map.put("success", false);
             map.put("errorInfo", "人机验证失败！");
-        }*/else{//登陆成功
+        }else{//登陆成功
             Subject subject = SecurityUtils.getSubject();
             //加密，将字段转换为token,subject相当于shiro的一个门，确认角色的身份
             //两个参数,userName,passWord

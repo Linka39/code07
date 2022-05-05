@@ -30,6 +30,8 @@ public class SensitiveWordInit {
 	private  SensitiveWordService sensitiveWordService;
 	@Autowired
 	private  DicService dicService;
+	@Autowired
+	private  getList  getList;
 
 
 	public SensitiveWordInit(){
@@ -171,7 +173,7 @@ public class SensitiveWordInit {
 
 	private  HashSet<String> readSensitiveWordFromDB() throws Exception{
 
-		getList getList = new getList();
+
 		List<String> wordList = getList.getWordList();
 		HashSet<String> set = new HashSet<String>(wordList);
 

@@ -15,7 +15,6 @@ public class getList {
 
 
     public List<String> getWordList(){
-        List<String> wordList;
-        return wordList = sensitiveWordService.getAllSensitiveWord();
+        return sensitiveWordService.getAllSensitiveWord();
     }
 }
