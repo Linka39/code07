@@ -1,11 +1,15 @@
 package com.linka39.code07.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.linka39.code07.entity.User;
+import com.linka39.code07.sensitiveUtil.SensitiveWordFilter;
 import com.linka39.code07.service.SensitiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 敏感词控制层
@@ -36,8 +40,17 @@ public class SensitiveController {
      */
     @RequestMapping("/sensitiveArticleExist")
     @ResponseBody
-    public String sensitiveArticle(String text)throws Exception{
-        JSONObject json = sensitiveService.sensitiveWordExist(text);
+    public String sensitiveArticle(String text, HttpSession session)throws Exception{
+        User currentUser = (User) session.getAttribute("currentUser");
+        JSONObject json = sensitiveService.getArticleSensitiveWord(text);
+        if(json.getIntValue("code")>0){
+            JSONObject userJson = sensitiveService.getUserAttr(currentUser.getId());
+            json.putAll(userJson);
+            String formatStr = sensitiveService.formatUserAttr(json);
+            json.put("level",sensitiveService.getJctreeAttr(formatStr));
+            json.put("accessLevel",SensitiveWordFilter.accessLevel);
+
+        }
         return json.toString();
     }
 

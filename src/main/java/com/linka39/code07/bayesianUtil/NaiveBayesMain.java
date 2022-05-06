@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.linka39.code07.bayesianUtil.MultinomialModelNaiveBayes.SortMap;
+import static com.linka39.code07.bayesianUtil.MultinomialModelNaiveBayes.classifierResult;
 
 /**
  *
@@ -77,7 +78,7 @@ public class NaiveBayesMain {
 		for(String str: set){
 			System.out.println("classifer:"+str+"     probability:"+resultMap.get(str));
 		}
-		System.out.println("The final result:"+MultinomialModelNaiveBayes.getClassifyResultName());
+		System.out.println("The final result:"+MultinomialModelNaiveBayes.getClassifyResultName(classifierResult));
 		resultMap = SortMap(resultMap,resultMap.size());
 		System.out.println(resultMap.toString());
 

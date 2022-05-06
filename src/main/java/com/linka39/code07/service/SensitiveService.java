@@ -16,7 +16,7 @@ public interface SensitiveService {
     //包含敏感词
     public JSONObject sensitiveWordExist(String text);
 
-    //获取所属敏感词
+    //获取文章敏感词
     public JSONObject getArticleSensitiveWord(String text);
 
     //计算敏感词所属分类
@@ -25,7 +25,10 @@ public interface SensitiveService {
     public JSONObject getUserAttr(Integer userId);
 
     //提取转换用户属性
-    public JSONObject formatUserAttr(Integer userId);
+    public String formatUserAttr(JSONObject obj);
+
+    //获取决策树的结果
+    public String getJctreeAttr(String formatStr);
 
     //
     public JSONObject sensitiveDataWrite(LinkedList<String[]> sxList, int insertMod);

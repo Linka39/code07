@@ -90,15 +90,15 @@ public class MultinomialModelNaiveBayes {
 	* @return String
 	* @throws
 	 */
-	public static String getClassifyResultName(){
-		if(classifierResult.isEmpty()){
+	public static String getClassifyResultName(Map<String, BigDecimal> words){
+		if(words.isEmpty()){
 			return "N/A";
 		}
 		BigDecimal result=new BigDecimal(0);
 		String classifierName="";
-		Set<String> classifierSet=classifierResult.keySet();
+		Set<String> classifierSet=words.keySet();
 		for(String classifier : classifierSet){
-			BigDecimal classifierValue=classifierResult.get(classifier);
+			BigDecimal classifierValue=words.get(classifier);
 			if(classifierValue.compareTo(result)>-1){
 				result=classifierValue;
 				classifierName=classifier;

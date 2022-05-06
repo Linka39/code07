@@ -127,13 +127,20 @@ public class SensitiveServiceImpl implements SensitiveService {
         sensitivePathConfig.initStopWord();
         sensitivePathConfig.initSensitiveWordMap();
         /*去除全部空格*/
-        text = SensitiveWordFilter.stringConvert2(text);
+//        text = SensitiveWordFilter.stringConvert2(text);
         Map<String, Long> temp_words = new LinkedHashMap<String, Long>();
+
+//        Map<String, Long> sensitiveMap = SensitiveWordFilter.getSensitiveWordToMap2(temp_words, SensitiveWordFilter.sensiMatchType);
+        Map<String,Map<String, Integer>> sensitiveMap = SensitiveWordFilter.getSensitiveWordToMap(text, SensitiveWordFilter.sensiMatchType);
+        Map<String, Integer> native_sensitiveMap = sensitiveMap.get("native_words");
+        if(native_sensitiveMap.size()==0){
+            json.put("code", "-120");
+            json.put("result","没有敏感词");
+            return json;
+        }
         temp_words = ChineseTokenizer.segStr(text);
 
-        Map<String, Long> sensitiveMap = SensitiveWordFilter.getSensitiveWordToMap2(temp_words, SensitiveWordFilter.sensiMatchType);
-
-//字数,敏感词数/词数,敏感词情感分类,用户发表文章数,用户年龄，用户积分,敏感词评级
+        //字数,敏感词数/词数,敏感词情感分类,用户发表文章数,用户年龄，用户积分,敏感词评级
 
         //字数
         int textNum = temp_words.size();
@@ -144,26 +151,33 @@ public class SensitiveServiceImpl implements SensitiveService {
         }
 
         //敏感词数/词数
-        Set<String> classifierSet=sensitiveMap.keySet();
+        Set<String> classifierSet= native_sensitiveMap.keySet();
         int sensiTotalNum = 0;
+        ArrayList<String> native_sensitiveList = new ArrayList<>();
         for(String classifier : classifierSet){
-            int wordNum =sensitiveMap.get(classifier).intValue();
+            int wordNum = native_sensitiveMap.get(classifier);
             sensiTotalNum += wordNum;
+            while(wordNum>0){
+                native_sensitiveList.add(classifier);
+                wordNum--;
+            }
         }
-        sensitiveMap = SensitiveWordFilter.SortMap(sensitiveMap,sensitiveMap.size());
         Float sensitiveRate = sensiTotalNum*1.0f/textNum*1.0f;
         System.out.println(sensiTotalNum+"/"+textNum+" = "+sensitiveRate);
 
         //敏感词情感分类
-        System.out.println(sensitiveMap.toString());
-
-        //用户发表文章数,用户年龄，用户积分
-        if (sensitiveMap.size() == 0) {
-            json.put("code", "-101");
-        }else{
+        String classifyName = "";
+        JSONObject sensitiveWordClassify = this.sensitiveWordClassify(native_sensitiveList);
+        if(sensitiveWordClassify.getIntValue("code")==1){
+            classifyName = sensitiveWordClassify.getString("result");
             json.put("sensitiveMap", sensitiveMap);
-            json.put("textNum", textNum);
-            json.put("sensiTotalNum", sensiTotalNum);
+            json.put("count", textNum);
+            json.put("sensitiveNum", sensiTotalNum);
+            json.put("sensitive",sensitiveRate);
+            json.put("emotion",classifyName);
+        }else{
+            json.put("code", "-101");
+            json.put("result",sensitiveWordClassify.getString("result"));
         }
         return json;
     }
@@ -173,17 +187,18 @@ public class SensitiveServiceImpl implements SensitiveService {
         JSONObject json = new JSONObject();
         try {
             json.put("code", "1");
+            //用户发表文章数,用户年龄，用户积分
             User user = userService.findById(userId);
             Article s_article = new Article();
             s_article.setUser(user);
             Long total = articleService.getTotal(s_article);
 
-            long startDateTime = new Date().getTime();
-            long endDateTime = user.getRegisterDate().getTime();
+            long endDateTime = new Date().getTime();
+            long startDateTime = user.getRegisterDate().getTime();
             int days =  (int)((endDateTime - startDateTime) / (1000 * 3600 * 24));
 
-            json.put("registerdays", days);
-            json.put("articletotals", total);
+            json.put("days", days);
+            json.put("papers", total);
             json.put("points", user.getPoints());
         }catch (Exception e){
             e.printStackTrace();
@@ -193,35 +208,113 @@ public class SensitiveServiceImpl implements SensitiveService {
         return json;
     }
 
+    /**
+     * count	文章词数量 v-high[5000,+), high[3000,5000), med[500,3000), low[0,500)
+     * sensitive	敏感词数/词数，v-high[0.2,+), high[0.1,0.2), med[0.05,0.1), low[0,0.05)
+     * emotion	敏感词情感分类，1,2, 3, 4, 5
+     * papers	用户发表文章数，low[0,5), med[5,30), high[30,+)
+     * days	用户年龄，small[0,15), med[15,100), big[100,+)
+     * points	用户积分，low[0,10), med[10,50), high[50,+)
+     * level	敏感词评级，four, three, two, one
+     */
     @Override
-    public JSONObject formatUserAttr(Integer userId) {
-        String[] params = new String[] { "med","med","2","4","big","high"};
-        JSONObject json = new JSONObject();
-        json.put("code", "1");
+    public String formatUserAttr(JSONObject obj) {
+        String formatStr = "";
+        int tempValue = -1;
+        //ccount	文章词数量格式化 v-high[5000,+), high[3000,5000), med[500,3000), low[0,500)
+        if(obj.containsKey("count")){
+            tempValue = obj.getIntValue("count");
+            if(tempValue >= 5000)
+                formatStr += "vhigh";
+            else if(tempValue >= 3000 && tempValue < 5000)
+                formatStr += "high";
+            else if(tempValue >= 500 && tempValue < 3000)
+                formatStr += "med";
+            else if(tempValue >= 0 && tempValue < 500)
+                formatStr += "low";
+            formatStr += ";";
+        }else{
+            formatStr += "-;";
+        }
+        //sensitive	敏感词数/词数格式化，v-high[0.2,+), high[0.1,0.2), med[0.05,0.1), low[0,0.05)
+        if(obj.containsKey("sensitive")){
+            tempValue = obj.getIntValue("sensitive");
+            if(tempValue >= 0.2)
+                formatStr += "vhigh";
+            else if(tempValue >= 0.1 && tempValue < 0.2)
+                formatStr += "high";
+            else if(tempValue >= 0.05 && tempValue < 0.1)
+                formatStr += "med";
+            else if(tempValue >= 0 && tempValue < 0.05)
+                formatStr += "low";
+            formatStr += ";";
+        }else{
+            formatStr += "-;";
+        }
+        //emotion	敏感词情感分类，1, 2, 3, 4, 5
+        if(obj.containsKey("emotion")){
+            formatStr += obj.getString("emotion")+";";
+        }else{
+            formatStr += "-;";
+        }
+        //papers	用户发表文章数，low[0,5), med[5,30), high[30,+)
+        if(obj.containsKey("papers")){
+            tempValue = obj.getIntValue("papers");
+            if(tempValue >= 30)
+                formatStr += "high";
+            else if(tempValue >= 5 && tempValue < 30)
+                formatStr += "med";
+            else if(tempValue >= 5)
+                formatStr += "low";
+            formatStr += ";";
+        }else{
+            formatStr += "-;";
+        }
+        //days	用户年龄，small[0,15), med[15,100), big[100,+)
+        if(obj.containsKey("days")){
+            tempValue = obj.getIntValue("days");
+            if(tempValue >= 100)
+                formatStr += "big";
+            else if(tempValue >= 15 && tempValue < 100)
+                formatStr += "med";
+            else if(tempValue >= 0 && tempValue < 15)
+                formatStr += "small";
+            formatStr += ";";
+        }else{
+            formatStr += "-;";
+        }
+        //points	用户积分，low[0,10), med[10,50), high[50,+)
+        if(obj.containsKey("points")){
+            tempValue = obj.getIntValue("points");
+            if(tempValue >= 50)
+                formatStr += "high";
+            else if(tempValue >= 10 && tempValue < 50)
+                formatStr += "med";
+            else if(tempValue >= 0 && tempValue < 10)
+                formatStr += "low";
+        }else{
+            formatStr += "-";
+        }
+        return formatStr;
+
+    }
+
+    @Override
+    public String getJctreeAttr(String formatStr) {
+//        String[] params = new String[] { "med","med","2","4","big","high"};
+        String[] params = formatStr.split(";");
+        String jctreeResult = null;
         try {
             System.out.println("测试数据："+ Arrays.toString(params));
             if (JCTree.rootNode == null) {
                 JCTree.initJCTree();
             }
-            Object object = JCTree.getResult(JCTree.rootNode , JCTree.rootShuXing, params);//uacc ,acc, good,vgood
-            User user = userService.findById(userId);
-            Article s_article = new Article();
-            s_article.setUser(user);
-            Long total = articleService.getTotal(s_article);
-
-            long startDateTime = new Date().getTime();
-            long endDateTime = user.getRegisterDate().getTime();
-            int days =  (int)((endDateTime - startDateTime) / (1000 * 3600 * 24));
-            json.put("registerdays", days);
-            json.put("articletotals", total);
-            json.put("points", user.getPoints());
+            jctreeResult = (String)JCTree.getResult(JCTree.rootNode , JCTree.rootShuXing, params);//uacc ,acc, good,vgood
         }catch (Exception e){
             e.printStackTrace();
-            json.put("code", "-103");
-            json.put("result", "删除失败");
         }
 
-        return json;
+        return jctreeResult;
     }
 
     @Override
@@ -237,14 +330,15 @@ public class SensitiveServiceImpl implements SensitiveService {
             for(String str: set){
                 System.out.println("classifer:"+str+"     probability:"+resultMap.get(str));
             }
-            resultMap = MultinomialModelNaiveBayes.SortMap(resultMap,resultMap.size());
-            System.out.println(resultMap.toString());
-
+//            resultMap = MultinomialModelNaiveBayes.SortMap(resultMap,resultMap.size());
+            String classifyName = MultinomialModelNaiveBayes.getClassifyResultName(resultMap);
+//            System.out.println(resultMap.toString());
+            json.put("result", classifyName);
 
         }catch (Exception e){
             e.printStackTrace();
             json.put("code", "-103");
-            json.put("result", "删除失败");
+            json.put("result", "分类失败");
         }
 
         return json;

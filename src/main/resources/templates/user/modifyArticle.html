@@ -102,7 +102,7 @@
 
 			// 新增敏感词改造
 			// 判断内容哦个中是否包含敏感词
-			$.post("/Sensitive/sensitiveWordExist",
+			$.post("/Sensitive/sensitiveArticleExist",
 					{"text":content},
 					function(json){
 						if(json.code > 0){ // 包含敏感词
