@@ -94,6 +94,7 @@
 				return false;
 			}
 			$("#content").val(content);
+			$("#reason").val("");
 
 			// 新增敏感词改造
 			// 判断内容哦个中是否包含敏感词
@@ -109,11 +110,18 @@
 							for(let k in sensitiveNative_words){
 								wordshtml += `["<font>`+k+`</font>"-"<font>`+ sensitiveNative_words[k]+ `</font>"]，`
 							}
-							wordshtml.substr(0,wordshtml.length-1);
+
+							let canNext = getLevel(json.level) >= getLevel(json.accessLevel);
+							let tsHtml = "";
+							if(canNext)
+								tsHtml = `<b>敏感等级为<font>` +json.level + `</font>，点击确定提交后，请等待审核人员审核。</b>`;
+							else
+								tsHtml = `<b>敏感等级为<font>` +json.level + `</font>，请按提示降到<font>` + json.accessLevel +`</font>再进行提交</b>`;
+							wordshtml.substr(wordshtml.length-1);
 							let html= `<tr>
 							<th>涉及敏感词：</th>
 							<td>`+wordshtml+`</td>
-							<td><i class="layui-icon layui-icon-face-smile" ></i></td>
+							<td width="10%"><i class="layui-icon layui-icon-face-smile" ></i></td>
 							</tr>
 							<tr>
 							<th>敏感词数量：</th>
@@ -148,9 +156,7 @@
 
 							<tr>
 							<th>提示：</th>
-							<td><b>敏感等级为<font>three</font>，请按提示降到<font>four</font>再进行提交</b> </td>
-							<td><b>敏感等级为<font>four</font>，点击确定提交后，请等待审核人员审核。</b></td>
-
+							<td>`+ tsHtml +`</td>
 							<td><i class="layui-icon layui-icon-dialogue" ></i></td>
 							</tr>`;
 							sensitivediv.append(html);
@@ -165,13 +171,19 @@
 								content: $("#sensitivediv").html(),
 								btn: ['确认', '取消'],
 								btn1: function (index, layero) {
-									for(let k in sensitiveNative_words){
-										content = content.replaceAll(k,"<font class='r'>"+ k +"</font>");
+									if(canNext){
+										for(let k in sensitiveNative_words){
+											content = content.replaceAll(k,"<font class='r'>"+ k +"</font>");
+										}
+										$("#content").val(content);
+										$("#reason").val(JSON.stringify(json));
+										sensitiveYes = true;
+										$("#submitbtn").click();
+										return;
+									}else{
+										layer.close(index);
+										return;
 									}
-									$("#content").val(content);
-									sensitiveYes = true;
-									$("#submitbtn").click();
-									return;
 								},
 								btn2: function (index) {
 									return;

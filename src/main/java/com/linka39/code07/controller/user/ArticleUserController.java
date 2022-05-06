@@ -1,13 +1,12 @@
 package com.linka39.code07.controller.user;
 
+import com.alibaba.fastjson.JSONObject;
 import com.linka39.code07.entity.Article;
+import com.linka39.code07.entity.SensitiveArticle;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.entity.UserDownload;
 import com.linka39.code07.lucene.ArticleIndex;
-import com.linka39.code07.service.ArticleService;
-import com.linka39.code07.service.CommentService;
-import com.linka39.code07.service.UserDownloadService;
-import com.linka39.code07.service.UserService;
+import com.linka39.code07.service.*;
 import com.linka39.code07.util.DateUtil;
 import com.linka39.code07.util.RedisUtil;
 import com.linka39.code07.util.StringUtil;
@@ -48,6 +47,8 @@ public class ArticleUserController {
     private UserService userService;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private SensitiveArticleService sensitiveArticleService;
     @Autowired
     private ArticleIndex articleIndex;
     @Autowired
@@ -176,10 +177,30 @@ public class ArticleUserController {
             //修改Lucene索引，redis缓存中删除这个索引
             articleIndex.updateIndex(oldArticle);
         }
+        JSONObject sensitiveJson = null;
+        if(!article.getReason().isEmpty()){
+            sensitiveJson = JSONObject.parseObject(article.getReason());
+            oldArticle.setState(4);
+        }
         oldArticle.setUseful(true);
         articleService.save(oldArticle);
         redisUtil.set("article_"+oldArticle.getId(),oldArticle,10*60);
         articleIndex.updateIndex(oldArticle);
+        if(sensitiveJson!=null){
+            SensitiveArticle sensitiveArticle = sensitiveArticleService.findByArticleId(article.getId());
+            sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));
+            sensitiveArticle.setSensitivecount(sensitiveJson.getIntValue("sensitiveNum"));
+            sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));
+            sensitiveArticle.setEmotion(sensitiveJson.getString("emotion"));
+            sensitiveArticle.setPapers(sensitiveJson.getIntValue("papers"));
+            sensitiveArticle.setPoints(sensitiveJson.getIntValue("points"));
+            sensitiveArticle.setLevel(sensitiveJson.getString("level"));
+            sensitiveArticle.setName(article.getName());
+            sensitiveArticle.setState(4);
+            sensitiveArticle.setSensitiveWord(sensitiveJson.getJSONObject("sensitiveMap").getString("words"));
+            sensitiveArticle.setUploadDate(new Date());
+            sensitiveArticleService.save(sensitiveArticle);
+        }
         ModelAndView mav = new ModelAndView();
         mav.addObject("title","修改帖子成功页面");
         mav.setViewName("user/publishArticleSuccess");

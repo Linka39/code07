@@ -105,7 +105,122 @@
 				return false;
 			}
 			$("#content").val(content);
-			return true;
+			$("#reason").val("");
+
+			// 新增敏感词改造
+			// 判断内容哦个中是否包含敏感词
+			$.post("/Sensitive/sensitiveArticleExist",
+					{"text":content},
+					function(json){
+						if(json.code > 0){ // 包含敏感词
+							//处理html展示
+							let sensitivediv=$("#sensitivediv2");
+							sensitivediv.html("");
+							let sensitiveNative_words = json.sensitiveMap.native_words;
+							let wordshtml ="";
+							for(let k in sensitiveNative_words){
+								wordshtml += `["<font>`+k+`</font>"-"<font>`+ sensitiveNative_words[k]+ `</font>"]，`
+							}
+
+							let canNext = getLevel(json.level) >= getLevel(json.accessLevel);
+							let tsHtml = "";
+							if(canNext)
+								tsHtml = `<b>敏感等级为<font>` +json.level + `</font>，点击确定提交后，请等待审核人员审核。</b>`;
+							else
+								tsHtml = `<b>敏感等级为<font>` +json.level + `</font>，请按提示降到<font>` + json.accessLevel +`</font>再进行提交</b>`;
+							wordshtml.substr(wordshtml.length-1);
+							let html= `<tr>
+							<th>涉及敏感词：</th>
+							<td>`+wordshtml+`</td>
+							<td width="10%"><i class="layui-icon layui-icon-face-smile" ></i></td>
+							</tr>
+							<tr>
+							<th>敏感词数量：</th>
+							<td><font>`+ json.sensitiveNum +`</font></td>
+							<td><i class="layui-icon layui-icon-rate-solid" ></i></td>
+							</tr>
+							<tr>
+							<th>文章分词数量：</th>
+							<td>`+ json.count +`</td>
+							<td><i class="layui-icon layui-icon-camera-fill" ></i></td>
+							</tr>
+							<tr>
+							<th>敏感词情感分类：</th>
+							<td><font>`+ json.emotion +`</font></td>
+							<td><i class="layui-icon layui-icon-fonts-strong" ></i></td>
+							</tr>
+							<tr>
+							<th>用户发表文章数：</th>
+							<td>`+ json.papers +`</td>
+							<td><i class="layui-icon layui-icon-radio" ></i></td>
+							</tr>
+							<tr>
+							<th>用户积分：</th>
+							<td>`+ json.points +`</td>
+							<td><i class="layui-icon layui-icon-share" ></i></td>
+							</tr>
+							<tr>
+							<th>敏感词评级：</th>
+							<td><font>`+ json.level +`</font></td>
+							<td><i class="layui-icon layui-icon-form" ></i></td>
+							</tr>
+
+							<tr>
+							<th>提示：</th>
+							<td>`+ tsHtml +`</td>
+							<td><i class="layui-icon layui-icon-dialogue" ></i></td>
+							</tr>`;
+							sensitivediv.append(html);
+
+							layer.open({
+								type: 1,
+								title: '敏感词评论页面',
+								shadeClose: true,
+								shade: 0.8,
+								async : true,
+								area: ['720px', '400px'],
+								content: $("#sensitivediv").html(),
+								btn: ['确认', '取消'],
+								btn1: function (index, layero) {
+									if(canNext){
+										for(let k in sensitiveNative_words){
+											content = content.replaceAll(k,"<font class='r'>"+ k +"</font>");
+										}
+										$("#content").val(content);
+										$("#reason").val(JSON.stringify(json));
+										sensitiveYes = true;
+										$("#submitbtn").click();
+										return;
+									}else{
+										layer.close(index);
+										return;
+									}
+								},
+								btn2: function (index) {
+									return;
+								},
+								success: function(layero, index)
+								{
+									var tips;
+									$(".layui-icon-form").on({
+										mouseenter:function() {
+
+											tips = layer.tips('决策树评定的敏感等级：one > two > three > four', this, {
+												tips: [2, "#2760c4"]
+												,time:0,area: 'auto',maxWidth:500
+											});
+										},
+										mouseleave:function(){
+											layer.close(tips);
+										}
+									});
+								}
+							});
+						}else{
+							return true;
+						}
+					},"json");
+			return false;
 		});
 	});
 	//文档加载完后

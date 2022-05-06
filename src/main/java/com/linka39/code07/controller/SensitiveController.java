@@ -49,7 +49,6 @@ public class SensitiveController {
             String formatStr = sensitiveService.formatUserAttr(json);
             json.put("level",sensitiveService.getJctreeAttr(formatStr));
             json.put("accessLevel",SensitiveWordFilter.accessLevel);
-
         }
         return json.toString();
     }
