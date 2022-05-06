@@ -214,13 +214,11 @@ public class SensitiveWordFilter extends SizeOf {
 	public static Map<String,Map<String, Integer>> getSensitiveWordToMap(String txt , int matchType){
 		/*去除全部空格*/
 		Map<String,Map<String, Integer>> mspRst = new HashMap<>();
-		txt = stringConvert2(txt);
+		String txt2 = stringConvert2(txt);
 		String SensWord = "";//当前敏感词
 		String nativeSensWord = "";//原生敏感词
 		Map<String, Integer> words = new HashMap<String, Integer>();//干扰性敏感词
 		Map<String, Integer> native_words = new HashMap<String, Integer>();//原生敏感词
-		ZHConverter converter = ZHConverter.getInstance(ZHConverter.SIMPLIFIED);
-		String txt2 = converter.convertOver(txt);
 
 		String regEx = "["+stopWordStr+"]";//当前停顿词
 

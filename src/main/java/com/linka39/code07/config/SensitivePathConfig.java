@@ -72,9 +72,17 @@ public class SensitivePathConfig {
      * 初始化贝叶斯分类器TrainSampleDataManager.allWordsMap
      */
     public void initTextWordsMap(){
-        if (TrainSampleDataManager.allWordsMap == null) {
-            TrainSampleDataManager.process();
+        try{
+            if (TrainSampleDataManager.allWordsMap == null|| TrainSampleDataManager.allWordsMap.size()==0) {
+                TrainSampleDataManager.process();
+                while(TrainSampleDataManager.allWordsMap.size()==0){
+                    Thread.sleep(10000);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     /**

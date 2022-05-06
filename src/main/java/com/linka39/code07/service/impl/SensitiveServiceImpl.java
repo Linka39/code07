@@ -253,7 +253,8 @@ public class SensitiveServiceImpl implements SensitiveService {
         }
         //emotion	敏感词情感分类，1, 2, 3, 4, 5
         if(obj.containsKey("emotion")){
-            formatStr += obj.getString("emotion")+";";
+            String tempstr = obj.getString("emotion");
+            formatStr += tempstr.substring(tempstr.length() -1)+";";
         }else{
             formatStr += "-;";
         }
@@ -322,9 +323,7 @@ public class SensitiveServiceImpl implements SensitiveService {
         JSONObject json = new JSONObject();
         json.put("code", "1");
         try {
-            if (TrainSampleDataManager.allWordsMap == null) {
-                TrainSampleDataManager.process();
-            }
+            sensitivePathConfig.initTextWordsMap();
             Map<String, BigDecimal> resultMap= MultinomialModelNaiveBayes.classifyResult(words);
             Set<String> set=resultMap.keySet();
             for(String str: set){

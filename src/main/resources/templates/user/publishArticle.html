@@ -102,44 +102,47 @@
 					function(json){
 						if(json.code > 0){ // 包含敏感词
 							//处理html展示
-							var sensitivediv=$("#sensitivediv2");
+							let sensitivediv=$("#sensitivediv2");
 							sensitivediv.html("");
-							let html="";
-							html= `<tr>
+							let sensitiveNative_words = json.sensitiveMap.native_words;
+							let wordshtml ="";
+							for(let k in sensitiveNative_words){
+								wordshtml += `["<font>`+k+`</font>"-"<font>`+ sensitiveNative_words[k]+ `</font>"]，`
+							}
+							wordshtml.substr(0,wordshtml.length-1);
+							let html= `<tr>
 							<th>涉及敏感词：</th>
-							<td>["<font>黑火药配方</font>"-"<font>2</font>"]，["<font>火药配方</font>"-"<font>2</font>"]，["<font>炸药</font>"-"<font>1</font>"]，
-						["<font>核弹制作方法</font>"-"<font>1</font>"]</td>
-						<!--					<td><i class="layui-icon layui-icon-image mr-2" style="font-size: 25px;color: #94b2fa;"></i></td>-->
+							<td>`+wordshtml+`</td>
 							<td><i class="layui-icon layui-icon-face-smile" ></i></td>
 							</tr>
 							<tr>
 							<th>敏感词数量：</th>
-							<td><font>7</font></td>
+							<td><font>`+ json.sensitiveNum +`</font></td>
 							<td><i class="layui-icon layui-icon-rate-solid" ></i></td>
 							</tr>
 							<tr>
 							<th>文章分词数量：</th>
-							<td>62</td>
+							<td>`+ json.count +`</td>
 							<td><i class="layui-icon layui-icon-camera-fill" ></i></td>
 							</tr>
 							<tr>
 							<th>敏感词情感分类：</th>
-							<td><font>涉爆04</font></td>
+							<td><font>`+ json.emotion +`</font></td>
 							<td><i class="layui-icon layui-icon-fonts-strong" ></i></td>
 							</tr>
 							<tr>
 							<th>用户发表文章数：</th>
-							<td>3</td>
+							<td>`+ json.papers +`</td>
 							<td><i class="layui-icon layui-icon-radio" ></i></td>
 							</tr>
 							<tr>
 							<th>用户积分：</th>
-							<td>30</td>
+							<td>`+ json.points +`</td>
 							<td><i class="layui-icon layui-icon-share" ></i></td>
 							</tr>
 							<tr>
 							<th>敏感词评级：</th>
-							<td><font>three</font></td>
+							<td><font>`+ json.level +`</font></td>
 							<td><i class="layui-icon layui-icon-form" ></i></td>
 							</tr>
 
@@ -162,6 +165,10 @@
 								content: $("#sensitivediv").html(),
 								btn: ['确认', '取消'],
 								btn1: function (index, layero) {
+									for(let k in sensitiveNative_words){
+										content = content.replaceAll(k,"<font class='r'>"+ k +"</font>");
+									}
+									$("#content").val(content);
 									sensitiveYes = true;
 									$("#submitbtn").click();
 									return;
