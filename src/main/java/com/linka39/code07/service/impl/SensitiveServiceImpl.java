@@ -14,6 +14,8 @@ import com.linka39.code07.sensitiveUtil.SensitiveWordInit;
 import com.linka39.code07.service.ArticleService;
 import com.linka39.code07.service.SensitiveService;
 import com.linka39.code07.service.UserService;
+import com.linka39.code07.util.StringUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -30,6 +32,8 @@ import static com.linka39.code07.config.SensitivePathConfig.*;
 @Transactional
 @Service("sensitiveService")
 public class SensitiveServiceImpl implements SensitiveService {
+
+    private static Logger logger1 = Logger.getLogger("myTest1");
 
     @Autowired
     private SensitivePathConfig sensitivePathConfig;
@@ -132,13 +136,18 @@ public class SensitiveServiceImpl implements SensitiveService {
 
 //        Map<String, Long> sensitiveMap = SensitiveWordFilter.getSensitiveWordToMap2(temp_words, SensitiveWordFilter.sensiMatchType);
         Map<String,Map<String, Integer>> sensitiveMap = SensitiveWordFilter.getSensitiveWordToMap(text, SensitiveWordFilter.sensiMatchType);
-        Map<String, Integer> native_sensitiveMap = sensitiveMap.get("native_words");
+        Map<String, Integer> native_sensitiveMap = sensitiveMap.get("words");
         if(native_sensitiveMap.size()==0){
             json.put("code", "-120");
             json.put("result","没有敏感词");
             return json;
         }
+        text = StringUtil.stripHtml(text);
+        String regEx = "["+SensitiveWordFilter.stopWordStr+"]";//当前停顿词
+        text = StringUtil.stripHtml(text);
+        text = text.replaceAll(regEx, "");
         temp_words = ChineseTokenizer.segStr(text);
+        int txtlen = text.length();
 
         //字数,敏感词数/词数,敏感词情感分类,用户发表文章数,用户年龄，用户积分,敏感词评级
 
@@ -156,7 +165,7 @@ public class SensitiveServiceImpl implements SensitiveService {
         ArrayList<String> native_sensitiveList = new ArrayList<>();
         for(String classifier : classifierSet){
             int wordNum = native_sensitiveMap.get(classifier);
-            sensiTotalNum += wordNum;
+            sensiTotalNum += classifier.length() ;
             while(wordNum>0){
                 native_sensitiveList.add(classifier);
                 wordNum--;
@@ -221,6 +230,7 @@ public class SensitiveServiceImpl implements SensitiveService {
     public String formatUserAttr(JSONObject obj) {
         String formatStr = "";
         int tempValue = -1;
+        float tempFloat = 0;
         //ccount	文章词数量格式化 v-high[5000,+), high[3000,5000), med[500,3000), low[0,500)
         if(obj.containsKey("count")){
             tempValue = obj.getIntValue("count");
@@ -238,14 +248,14 @@ public class SensitiveServiceImpl implements SensitiveService {
         }
         //sensitive	敏感词数/词数格式化，v-high[0.2,+), high[0.1,0.2), med[0.05,0.1), low[0,0.05)
         if(obj.containsKey("sensitive")){
-            tempValue = obj.getIntValue("sensitive");
-            if(tempValue >= 0.2)
+            tempFloat = obj.getFloatValue("sensitive");
+            if(tempFloat >= 0.2)
                 formatStr += "vhigh";
-            else if(tempValue >= 0.1 && tempValue < 0.2)
+            else if(tempFloat >= 0.1 && tempFloat < 0.2)
                 formatStr += "high";
-            else if(tempValue >= 0.05 && tempValue < 0.1)
+            else if(tempFloat >= 0.05 && tempFloat < 0.1)
                 formatStr += "med";
-            else if(tempValue >= 0 && tempValue < 0.05)
+            else if(tempFloat >= 0 && tempFloat < 0.05)
                 formatStr += "low";
             formatStr += ";";
         }else{
@@ -302,15 +312,15 @@ public class SensitiveServiceImpl implements SensitiveService {
 
     @Override
     public String getJctreeAttr(String formatStr) {
-//        String[] params = new String[] { "med","med","2","4","big","high"};
         String[] params = formatStr.split(";");
         String jctreeResult = null;
         try {
-            System.out.println("测试数据："+ Arrays.toString(params));
+            logger1.info("预测数据："+ Arrays.toString(params));
             if (JCTree.rootNode == null) {
                 JCTree.initJCTree();
             }
-            jctreeResult = (String)JCTree.getResult(JCTree.rootNode , JCTree.rootShuXing, params);//uacc ,acc, good,vgood
+            jctreeResult = (String)JCTree.getResult(JCTree.rootNode , JCTree.rootShuXing, params);//one ,two, three, four
+            logger1.info("预测结果："+ jctreeResult);
         }catch (Exception e){
             e.printStackTrace();
         }

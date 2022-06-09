@@ -17,7 +17,7 @@ public interface DicRepository extends JpaRepository<Dic,Integer>, JpaSpecificat
      * @param zddm
      * @return
      */
-    @Query(value = "select zdnote from t_dic where zddm = ?1 and zdd = ?2",nativeQuery = true)
+    @Query(value = "select zdnote from t_dic where zddm = ?1 and zdz = ?2",nativeQuery = true)
     public String getNoteByzddm(String zddm,Integer zdz);
 
     /**

@@ -88,4 +88,9 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
     public List<String> getAllSensitiveWord() {
         return sensitiveWordRepository.getAllSensitiveWord(1);
     }
+
+    @Override
+    public List<String[]> getAllSensitiveWordByEmotion(Integer emotion) {
+        return sensitiveWordRepository.getAllSensitiveWordByEmotion(emotion);
+    }
 }

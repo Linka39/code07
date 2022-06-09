@@ -109,7 +109,7 @@
 							//处理html展示
 							let sensitivediv=$("#sensitivediv2");
 							sensitivediv.html("");
-							let sensitiveNative_words = json.sensitiveMap.native_words;
+							let sensitiveNative_words = json.sensitiveMap.words;
 							let wordshtml ="";
 							for(let k in sensitiveNative_words){
 								wordshtml += `["<font>`+k+`</font>"-"<font>`+ sensitiveNative_words[k]+ `</font>"]，`
@@ -177,7 +177,7 @@
 								btn1: function (index, layero) {
 									if(canNext){
 										for(let k in sensitiveNative_words){
-											content = content.replaceAll(k,"<font class='r'>"+ k +"</font>");
+											content = content.replaceAll(k,"<font>"+ k +"</font>");
 										}
 										$("#content").val(content);
 										$("#reason").val(JSON.stringify(json));
@@ -210,7 +210,8 @@
 								}
 							});
 						}else{
-							return true;
+							sensitiveYes = true;
+							$("#submitbtn").click();
 						}
 					},"json");
 			return false;
@@ -219,22 +220,7 @@
 
 
 	});
-	let getLevel = (level) => {
-		switch (level) {
-			case 'one':
-				return 1;
-				break;
-			case 'two':
-				return 2;
-				break;
-			case 'three':
-				return 3;
-				break;
-			case 'four':
-				return 4;
-				break;
-		}
-	}
+
 
 
 	//文档加载完后

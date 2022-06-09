@@ -26,10 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户页面跳转控制器
@@ -152,9 +149,39 @@ public class ArticleUserController {
         article.setState(1);
         article.setView(StringUtil.randomInteger());
         ModelAndView mav = new ModelAndView();
+        JSONObject sensitiveJson = null;
+        if(!article.getReason().isEmpty()){
+            sensitiveJson = JSONObject.parseObject(article.getReason());
+            article.setReason("");
+            article.setState(4);
+            JSONObject words = sensitiveJson.getJSONObject("sensitiveMap").getJSONObject("words");
+            Set<String> set=words.keySet();
+            String contentstr = article.getContent();
+            for(String str: set){
+                contentstr = contentstr.replaceAll(str,"<font>"+ str +"</font>");
+            }
+            article.setContent(contentstr);
+        }
         articleService.save(article);
         redisUtil.set("article_"+article.getId(),article,10*60);
         articleIndex.updateIndex(article);
+
+        if(sensitiveJson!=null){
+            SensitiveArticle sensitiveArticle = new SensitiveArticle();
+            sensitiveArticle.setArticle(article);
+            sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));
+            sensitiveArticle.setSensitivecount(sensitiveJson.getIntValue("sensitiveNum"));
+            sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));
+            sensitiveArticle.setEmotion(sensitiveJson.getString("emotion"));
+            sensitiveArticle.setPapers(sensitiveJson.getIntValue("papers"));
+            sensitiveArticle.setPoints(sensitiveJson.getIntValue("points"));
+            sensitiveArticle.setLevel(sensitiveJson.getString("level"));
+            sensitiveArticle.setName(article.getName());
+            sensitiveArticle.setState(4);
+            sensitiveArticle.setSensitiveWord(sensitiveJson.getJSONObject("sensitiveMap").getString("words"));
+            sensitiveArticle.setUploadDate(new Date());
+            sensitiveArticleService.save(sensitiveArticle);
+        }
         mav.addObject("title","发布帖子成功页面");
         mav.setViewName("user/publishArticleSuccess");
         return mav;
@@ -181,6 +208,13 @@ public class ArticleUserController {
         if(!article.getReason().isEmpty()){
             sensitiveJson = JSONObject.parseObject(article.getReason());
             oldArticle.setState(4);
+            JSONObject words = sensitiveJson.getJSONObject("sensitiveMap").getJSONObject("words");
+            Set<String> set=words.keySet();
+            String contentstr = article.getContent();
+            for(String str: set){
+                contentstr = contentstr.replaceAll(str,"<font>"+ str +"</font>");
+            }
+            oldArticle.setContent(contentstr);
         }
         oldArticle.setUseful(true);
         articleService.save(oldArticle);
@@ -188,6 +222,7 @@ public class ArticleUserController {
         articleIndex.updateIndex(oldArticle);
         if(sensitiveJson!=null){
             SensitiveArticle sensitiveArticle = sensitiveArticleService.findByArticleId(article.getId());
+            sensitiveArticle = sensitiveArticle==null ? new SensitiveArticle():sensitiveArticle;
             sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));
             sensitiveArticle.setSensitivecount(sensitiveJson.getIntValue("sensitiveNum"));
             sensitiveArticle.setCount(sensitiveJson.getIntValue("count"));

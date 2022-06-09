@@ -2,8 +2,6 @@ package com.linka39.code07.controller.admin;
 
 import com.linka39.code07.bayesianUtil.TrainSampleDataManager;
 import com.linka39.code07.config.SensitivePathConfig;
-import com.linka39.code07.entity.Dic;
-import com.linka39.code07.entity.Link;
 import com.linka39.code07.entity.SensitiveWord;
 import com.linka39.code07.entity.User;
 import com.linka39.code07.sensitiveUtil.FileUtils;
@@ -11,8 +9,6 @@ import com.linka39.code07.sensitiveUtil.SensitiveWordFilter;
 import com.linka39.code07.service.DicService;
 import com.linka39.code07.service.SensitiveService;
 import com.linka39.code07.service.SensitiveWordService;
-import com.linka39.code07.util.CryptographyUtil;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -22,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,19 +68,23 @@ public class SensitiveWordAdminController {
     public Map<String,Object> save(SensitiveWord sensitiveWord, HttpServletRequest request){
         Map<String,Object> map = new HashMap<>();
         try{
+            sensitiveWord.setUpdateDate(new Date());
             sensitiveWordService.save(sensitiveWord);
             //数据修改后重新加载初始化数据
             SensitiveWordFilter.sensitiveWordMap = null;
             sensitivePathConfig.initSensitiveWordMap();//初始化敏感词库sensitiveWordMap
             String note = dicService.getNoteByzddm("sensitive_class",sensitiveWord.getEmotion());
-            String content = sensitiveWord.getWord();
-            StringBuilder stringBuilder = null;
-            for(int i=0;i<sensitiveWord.getEmotionWeight();i++){
-                stringBuilder.append(content + "\n");
+            StringBuilder stringBuilder = new StringBuilder();
+            List<String[]> allSensitiveWordByEmotionArr = sensitiveWordService.getAllSensitiveWordByEmotion(sensitiveWord.getEmotion());
+            for (String[] temp: allSensitiveWordByEmotionArr) {
+                for(int i=0;i<Integer.parseInt(temp[1]);i++){
+//                    String str = temp[0] + "\n";
+                    stringBuilder.append(temp[0] + "\n");
+                }
             }
-            FileUtils.deleteSensitiveWordFile(SensitivePathConfig.sensitivePath+note, content);
-            FileUtils.continueWrite(sensitivePathConfig.sensitivePath+note, stringBuilder.toString());
-            TrainSampleDataManager.allWordsMap = null;
+
+            FileUtils.clearInfoAndWrite(sensitivePathConfig.bayesianPath+ "Sample/" +note + "/10.txt", stringBuilder.toString());
+            TrainSampleDataManager.allWordsMap = new HashMap<>();
             map.put("success",true);
         }catch (Exception e){
             e.printStackTrace();
@@ -107,11 +107,11 @@ public class SensitiveWordAdminController {
             String note = dicService.getNoteByzddm("sensitive_class",sensitiveWord.getEmotion());
             sensitiveWordService.delete(id);
 
-            FileUtils.deleteSensitiveWordFile(SensitivePathConfig.sensitivePath+note, sensitiveWord.getWord());
+            FileUtils.deleteSensitiveWordFile(sensitivePathConfig.bayesianPath+ "Sample/" +note + "/10.txt", sensitiveWord.getWord());
             //数据修改后重新加载初始化数据
             SensitiveWordFilter.sensitiveWordMap = null;
             sensitivePathConfig.initSensitiveWordMap();//初始化敏感词库sensitiveWordMap
-            TrainSampleDataManager.allWordsMap = null;
+            TrainSampleDataManager.allWordsMap = new HashMap<>();
             map.put("success",true);
         }catch (Exception e){
             e.printStackTrace();

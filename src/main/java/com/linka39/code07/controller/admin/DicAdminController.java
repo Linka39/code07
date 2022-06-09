@@ -68,6 +68,7 @@ public class DicAdminController {
             }else if ("sensitive_math_type".equals(s_dic.getZddm())){
                 SensitiveWordFilter.sensiMatchType = Integer.parseInt(s_dic.getZdz());
             }
+
             map.put("success",true);
         }catch (Exception e){
             e.printStackTrace();

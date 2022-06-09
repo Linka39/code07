@@ -4,6 +4,7 @@ import com.linka39.code07.entity.Dic;
 import com.linka39.code07.repository.DicRepository;
 import com.linka39.code07.repository.DicRepository;
 import com.linka39.code07.service.DicService;
+import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,11 +43,11 @@ public class DicServiceImpl implements DicService {
             public Predicate toPredicate(Root<Dic> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if( s_dic!=null){
-                    if(s_dic.getZddm()!=null){
-                        predicate.getExpressions().add(cb.notEqual(root.get("zddm"),s_dic.getZddm()));
+                    if(StringUtil.isNotEmpty(s_dic.getZddm())){
+                        predicate.getExpressions().add(cb.like(root.get("zddm"),"%"+s_dic.getZddm()+"%"));
                     }
-                    if(s_dic.getZdz()!=null){
-                        predicate.getExpressions().add(cb.notEqual(root.get("zdz"),s_dic.getZdz()));
+                    if(StringUtil.isNotEmpty(s_dic.getZdz())){
+                        predicate.getExpressions().add(cb.like(root.get("zdz"),s_dic.getZdz()));
                     }
                 }
                 return predicate;

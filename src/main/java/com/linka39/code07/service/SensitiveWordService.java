@@ -22,6 +22,8 @@ public interface SensitiveWordService {
 
     public SensitiveWord find(Integer id);
 
+    public List<String[]> getAllSensitiveWordByEmotion(Integer emotion);
+
 
 }
 

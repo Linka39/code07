@@ -28,7 +28,7 @@ public class SensitiveArticle implements Serializable {
     @Column(length = 200)
     private String name;    //资源名称
     private Integer count;  //文章词数量 v-high[5000,+), high[3000,5000),
-    private Integer sensitivecount;  //敏感词数/词数，v-high[0.2,+), high[0.1,0.2), med[0.05,0.1), low[0,0.05)
+    private Integer sensitivecount;  //敏感词数
     @Column(length = 10)
     private String emotion; //敏感词情感分类，1,2, 3, 4, 5
     private Integer papers;  //用户发表文章数，用户在提交那一刻的审核通过的发表数量，low[0,5), med[5,30), high[30,+)

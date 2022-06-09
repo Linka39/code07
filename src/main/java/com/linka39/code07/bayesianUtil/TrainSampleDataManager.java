@@ -16,7 +16,7 @@ public class TrainSampleDataManager {
 	/**
 	 * 训练样本目录
 	 */
-	private static final String SAMPLE_DATA="E://my_project/code07/src/main/resources/config/bayesianFile/sample/";
+	private static final String SAMPLE_DATA="E://my_project/code07/src/main/resources/config/bayesianFile/Sample/";
 
 	/**
 	 * 整个训练样本的单词总数,包含重复的单词数
@@ -196,7 +196,7 @@ public class TrainSampleDataManager {
      */
     public static String readFile(String file) throws FileNotFoundException, IOException {
         StringBuffer sb = new StringBuffer();
-        InputStreamReader is = new InputStreamReader(new FileInputStream(file), "gbk");
+        InputStreamReader is = new InputStreamReader(new FileInputStream(file), "utf-8");
         BufferedReader br = new BufferedReader(is);
         String line = br.readLine();
         while (line != null) {
@@ -230,7 +230,7 @@ public class TrainSampleDataManager {
     				//读取文件内容
     				String content=readFile(article);
     				//es-ik分词
-    				Map<String, Long> wordsMap=ChineseTokenizer.segStr(content);
+    				Map<String, Long> wordsMap=ChineseTokenizer.segStrSplit(content,"\r\n");
     				if(allWordsMap.containsKey(file.getName())){
     					Map<String, Map<String, Long>> classifierValue=allWordsMap.get(file.getName());
     					classifierValue.put(article, wordsMap);

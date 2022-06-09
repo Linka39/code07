@@ -32,9 +32,9 @@
 							</div>
 						</div>
 						  <div class="layui-inline">
-							  <label class="layui-form-label">字典名称：</label>
+							  <label class="layui-form-label">字典值：</label>
 							  <div class="layui-input-inline">
-								  <input type="text" id="s_zdmc"  placeholder="请输入" autocomplete="off" class="layui-input" onkeydown="if(event.keyCode==13) search()"/>
+								  <input type="text" id="s_zdz"  placeholder="请输入" autocomplete="off" class="layui-input" onkeydown="if(event.keyCode==13) search()"/>
 							  </div>
 						  </div>
 
@@ -87,14 +87,14 @@
 	}
 
 	function search(){
-		var zdmc=$("#s_zdmc").val();
+		var zdz=$("#s_zdz").val();
 		var zddm=$("#s_zddm").val();
 		table.reload("wordListTable",{
 			page:{
 				curr:1
 			}//起始分页
 			,where:{
-				zdmc:zdmc,
+				zdz:zdz,
 				zddm:zddm
 			}//条件数据自动封入实体类
 		});

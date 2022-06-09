@@ -30,7 +30,7 @@
 			            <div class="layui-input-inline">
 							<label class="layui-form-label" style="width: 130px;">敏感词类别：</label>
 							<div class="layui-input-inline">
-								<select id="emotion" name="emotion" >
+								<select id="emotion" name="emotion" lay-filter="emotion">
 								</select>
 							</div>
 
@@ -103,6 +103,10 @@
 		    ]]
 		    ,page: true
 		  });
+
+		form.on('select(emotion)', function(data) {
+			search();
+		})
 	});
 
 	function formatAction(d){
@@ -130,11 +134,11 @@
 			if(d.emotion == 1){
 				return "反动01";
 			}else if(d.emotion == 2){
-				return "广告02";
+				return "涉暴02";
 			}else if(d.emotion == 3){
-				return "色情03";
+				return "广告03";
 			}else if(d.emotion == 4){
-				return "涉暴04";
+				return "色情04";
 			}else if(d.emotion == 5){
 				return "民生05";
 			}

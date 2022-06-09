@@ -3,6 +3,8 @@ package com.linka39.code07.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类
@@ -90,7 +92,7 @@ public class StringUtil {
 			return content;
 		}
 //		String regEx = "<[a-zA-Z]*?>([\\s\\S]*?)";
-		String regEx = "<.?font>";
+		String regEx = "<.?font.?>";
 		content = content.replaceAll(regEx, "");
 		return content;
 	}
@@ -160,8 +162,17 @@ public class StringUtil {
         return sb.toString();
     }
 
+	public static boolean match(String regex, String str) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(str);
+		return matcher.find();
+	}
+
 	public static void main(String[] args) {
+    	String str1 =  "[@！、。——……（）《》，【】‘；“^_？ !#$%￥&\'()*+,-./;{|<}=~>?]";
+		String str2 =  "网络陪%%聊";
 		genSixRandomNum();
+		System.out.println(match(str1,str2));
     	System.out.println(StringUtil.randomInteger());
 	}
 

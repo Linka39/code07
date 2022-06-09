@@ -48,21 +48,23 @@
 	function submitData(){
 		var emotion=$("#emotion").val().trim();
 		var word=$("#word").val().trim();
+		var emotionWeight=$("#emotionWeight").val().trim();
 		if(emotion=="") {
 	　　　　     　　 $("#errorInfo").text("请输入敏感词类型名称！");
 			  $("#emotion").focus();
 	　　　　　　      return false;
 	　　　}
 		if(word=="") {
-	　　　　     　　 $("#word").text("请输入敏感词！");
+　　　　     　　 $("#word").text("请输入敏感词！");
 			  $("#word").focus();
 	　　　　　　      return false;
 	　　　}
+		if(emotionWeight == "") emotionWeight=1;
 
 	   var id=getQueryVariable("id");
 	   if(id){
 		   $.post("/admin/sensitiveWord/save",
-			   {word:word,emotion:emotion},
+			   {id:id,word:word,emotion:emotion,emotionWeight:emotionWeight},
                function(result){
 			  if(result.success){
 				  alert("修改成功！");
@@ -73,7 +75,7 @@
 		  },"json");
 	   }else{
 		   $.post("/admin/sensitiveWord/save",
-               {word:word,emotion:emotion},
+               {word:word,emotion:emotion,emotionWeight:emotionWeight},
                function(result){
 				  if(result.success){
 					  alert("添加成功！");

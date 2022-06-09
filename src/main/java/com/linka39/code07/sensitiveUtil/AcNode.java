@@ -11,7 +11,7 @@ class AcNode
     Map<Character,AcNode> children=new HashMap<>();
     AcNode failNode;
     //使用set集合存储字符长度，防止敏感字符重复导致集合内数据重复
-    Set<Integer> wordLengthList = new HashSet<>();
+    Set<Integer> wordLengthList = new HashSet<>(); //exist数组，记录敏感词的终止位，方便回溯查找匹配
 
     public Map<Character, AcNode> getChildren() {
         return children;

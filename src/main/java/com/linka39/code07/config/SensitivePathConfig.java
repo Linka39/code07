@@ -73,10 +73,10 @@ public class SensitivePathConfig {
      */
     public void initTextWordsMap(){
         try{
-            if (TrainSampleDataManager.allWordsMap == null|| TrainSampleDataManager.allWordsMap.size()==0) {
+            if (TrainSampleDataManager.allWordsMap.size()==0) {
                 TrainSampleDataManager.process();
-                while(TrainSampleDataManager.allWordsMap.size()==0){
-                    Thread.sleep(10000);
+                while( TrainSampleDataManager.allWordsMap.size()==0){
+                    Thread.sleep(100);
                 }
             }
         }catch (Exception e){

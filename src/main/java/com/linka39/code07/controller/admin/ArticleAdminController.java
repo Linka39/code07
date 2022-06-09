@@ -207,12 +207,13 @@ public class ArticleAdminController {
         message.setPublishDate(new Date());
         // todo 消息模块要添加一个
         if(article.getState()==2){
+            //之前为异常的数据
             if(oldArticle.getState()==4){
                 String contentStr = oldArticle.getContent();
                 oldArticle.setContent(StringUtil.replaceStartTag(contentStr));
             }
             oldArticle.setState(2);
-            message.setContent("【审核通过】:您发布的帖子《"+oldArticle.getName()+"》审核通过！");
+            message.setContent("【审核通过】:您发布的帖子《"+oldArticle.getName()+"》敏感审核通过！");
             articleIndex.addIndex(oldArticle);
         }else{
             //todo 删除redis首页数据缓存

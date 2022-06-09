@@ -7,6 +7,7 @@ import com.linka39.code07.service.DicService;
 import com.linka39.code07.service.SensitiveWordService;
 import com.linka39.code07.service.impl.SensitiveServiceImpl;
 import com.linka39.code07.util.SizeOf;
+import com.linka39.code07.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -234,7 +235,7 @@ public class SensitiveWordFilter extends SizeOf {
 				}
 				//处理词库的敏感词map
 				nativeSensWord = txt2.substring(i, i+length);
-				if(nativeSensWord.matches(regEx)){
+				if(StringUtil.match(regEx,nativeSensWord)){
 					nativeSensWord = nativeSensWord.replaceAll(regEx, "");
 				}
 				if (native_words.containsKey(nativeSensWord)) {

@@ -55,6 +55,23 @@ public class ChineseTokenizer {
         return words;
     }
 
+    public static Map<String, Long> segStrSplit(String content,String split){
+        Map<String, Long> words = new LinkedHashMap<String, Long>();
+        try {
+            String[] strArr = content.split(split);  //\r\n
+            for (String str:strArr) {
+                if (words.containsKey(str)){
+                    words.put(str, words.get(str) + 1);
+                } else {
+                    words.put(str, 1L);
+                }
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return words;
+    }
+
     /**
      *
      * @Title: segStr

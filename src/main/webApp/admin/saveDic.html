@@ -38,12 +38,6 @@
 				</td>
 			</tr>
 			<tr>
-				<td><font style="color: red;margin-right: 3px;">*</font>字典值名称：</td>
-				<td>
-					<input id="zdnote" name="zdnote" class="layui-input" style="width: 300px"></input>
-				</td>
-			</tr>
-			<tr>
 				<td><button class="layui-btn" onclick="submitData();return false;">提交</button></td>
 				<td><font id="errorInfo" color="red"></font></td>
 			</tr>
@@ -74,7 +68,7 @@
 	   var id=getQueryVariable("id");
 	   if(id){
 		   $.post("/admin/Dic/save",
-			   {zdz:zdz,zdnote:zdnote},
+			   {id:id,zdz:zdz,zdnote:zdnote,zddm:$("#zddm").val().trim(),zdmc:$("#zdmc").val().trim()},
                function(result){
 			  if(result.success){
 				  alert("修改成功！");

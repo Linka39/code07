@@ -42,40 +42,39 @@
 								<table class="pure-table" width="100%">
 									<tr>
 										<th>涉及敏感词：</th>
-										<td>["<font>黑火药配方</font>"-"<font>2</font>"]</td>
+										<td id="sensitiveWord"></td>
 										<td><i class="layui-icon layui-icon-face-smile" ></i></td>
 									</tr>
 									<tr>
 										<th>敏感词数量：</th>
-										<td><font>2</font></td>
+										<td><font th:text="${sensitiveArticle.sensitivecount}"></font></td>
 										<td><i class="layui-icon layui-icon-rate-solid" ></i></td>
 									</tr>
 									<tr>
 										<th>文章分词数量：</th>
-										<td>62</td>
+										<td th:text="${sensitiveArticle.count}">62</td>
 										<td><i class="layui-icon layui-icon-camera-fill" ></i></td>
 									</tr>
 									<tr>
 										<th>敏感词情感分类：</th>
-										<td><font>涉爆04</font></td>
+										<td><font th:text="${sensitiveArticle.emotion}">涉爆04</font></td>
 										<td><i class="layui-icon layui-icon-fonts-strong" ></i></td>
 									</tr>
 									<tr>
 										<th>用户发表文章数：</th>
-										<td>3</td>
+										<td th:text="${sensitiveArticle.papers}">3</td>
 										<td><i class="layui-icon layui-icon-radio" ></i></td>
 									</tr>
 									<tr>
 										<th>用户积分：</th>
-										<td>30</td>
+										<td th:text="${sensitiveArticle.points}">30</td>
 										<td><i class="layui-icon layui-icon-share" ></i></td>
 									</tr>
 									<tr>
 										<th>敏感词评级：</th>
-										<td><font>four</font></td>
+										<td><font th:text="${sensitiveArticle.level}">four</font></td>
 										<td><i class="layui-icon layui-icon-form" ></i></td>
 									</tr>
-
 								</table>
 							</div>
 						</div>
@@ -103,7 +102,7 @@
       			</tr>
       			<tr>
       				<td colspan="3">
-      					<button class="layui-btn" onclick="yes()">审核通过</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      					<button class="layui-btn" onclick="yes()">审核通过</button>&nbsp
 					    <button class="layui-btn layui-btn-danger" onclick="no()">驳回</button>
       				</td>
       			</tr>
@@ -123,6 +122,15 @@
 		  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
 
 	});
+	$(function () {
+		let sensitiveNative_words = [[${sensitiveArticle.sensitiveWord}]];
+		// let wordshtml ="";
+		// for(let k in sensitiveNative_words){
+		// 	wordshtml += `["<font>`+k+`</font>"-"<font>`+ sensitiveNative_words[k]+ `</font>"]，`
+		// }
+		// wordshtml.substr(wordshtml.length-1);
+		$("#sensitiveWord").html(sensitiveNative_words);
+	})
 	$(".layui-icon-form").on({
 		mouseenter:function() {
 
@@ -138,7 +146,7 @@
 
 	function yes(){
 		$.post("/admin/article/updateState",
-				{"id":[[${article.id}]],"state":2},
+				{"id":[[${article.id}]],"sensitive":1,"state":2},
 				function(result){
 			if(result.success){
 				layer.open({
@@ -163,6 +171,7 @@
 		$.post("/admin/article/updateState",
 				{"id":[[${article.id}]],
 					"state":3,
+					"sensitive":1,
 					"reason":$("#reason").val()},
 		function(result){
 			if(result.success){

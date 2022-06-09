@@ -111,3 +111,20 @@ function sign() {
             }
         })
 }
+
+function getLevel(level){
+    switch (level) {
+        case 'one':
+            return 1;
+            break;
+        case 'two':
+            return 2;
+            break;
+        case 'three':
+            return 3;
+            break;
+        case 'four':
+            return 4;
+            break;
+    }
+}

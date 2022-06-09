@@ -20,4 +20,12 @@ public interface SensitiveWordRepository extends JpaRepository<SensitiveWord,Int
      */
     @Query(value = "select word from t_sensitive_word where  1 = ?1",nativeQuery = true)
     public List<String> getAllSensitiveWord(int num);
+
+    /**
+     * 查询敏感词by情感类型
+     * @param
+     * @return
+     */
+    @Query(value = "select word,emotion_weight from t_sensitive_word where  emotion = ?1",nativeQuery = true)
+    public List<String[]> getAllSensitiveWordByEmotion(int num);
 }

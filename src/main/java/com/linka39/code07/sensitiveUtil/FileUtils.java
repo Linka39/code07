@@ -239,6 +239,21 @@ public class FileUtils {
         }
     }
 
+    public static void clearInfoAndWrite(String fileName,String conent) {
+        File file = new File(fileName);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(conent);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 判断对应目录内，文本内容所在的Url
      *
@@ -320,7 +335,7 @@ public class FileUtils {
             StringBuffer stringBuffer = new StringBuffer();
             if (file.isFile() && file.exists()) {
                 BufferedReader bufferedReader = new BufferedReader(read);
-                String txt = null;
+                String txt = "";
                 //读取文件，将文件内容放入到set中
                 while ((txt = bufferedReader.readLine()) != null) {
                     if (!context.equals(txt)) {
@@ -328,7 +343,7 @@ public class FileUtils {
                         stringBuffer.append("\n");
                     }
                 }
-                stringBuffer.deleteCharAt(stringBuffer.length() - 1);
+//                stringBuffer.deleteCharAt(stringBuffer.length() - 1);
             } else {
                 throw new Exception("文件不存在");
             }

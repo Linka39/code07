@@ -30,25 +30,25 @@ public class NaiveBayesMain {
 //		public static Map<String, Map<String, Map<String, Long>>> allWordsMap=new HashMap<String, Map<String, Map<String, Long>>>();
 		Set<String> classifierSet=TrainSampleDataManager.allWordsMap.keySet();
 		int count = 0;
-		for(String classifier : classifierSet){
-			if(!"色情0rr4".equals(classifier)){
-				String emotion = classifier.substring(classifier.length()-1);
-				Map<String, Map<String, Long>> temp2=TrainSampleDataManager.allWordsMap.get(classifier);
-				Set<String> set2=temp2.keySet();
-				for(String s2 : set2){
-					int scnt = 0;
-					Map<String, Long> temp3=temp2.get(s2);
-					Set<String> set3=temp3.keySet();
-					for(String s3 : set3){
-						scnt = temp3.get(s3).intValue();
-						count=count+ scnt;
-//						System.out.print(s3+"\n");
-						System.out.print("("+emotion+",NOW(),'"+ s3 +"',62,"+ scnt +"),");
-					}
-				}
-			}
-
-		}
+//		for(String classifier : classifierSet){
+//			if(!"色情0rr4".equals(classifier)){
+//				String emotion = classifier.substring(classifier.length()-1);
+//				Map<String, Map<String, Long>> temp2=TrainSampleDataManager.allWordsMap.get(classifier);
+//				Set<String> set2=temp2.keySet();
+//				for(String s2 : set2){
+//					int scnt = 0;
+//					Map<String, Long> temp3=temp2.get(s2);
+//					Set<String> set3=temp3.keySet();
+//					for(String s3 : set3){
+//						scnt = temp3.get(s3).intValue();
+//						count=count+ scnt;
+////						System.out.print(s3+"\n");
+//						System.out.print("("+emotion+",NOW(),'"+ s3 +"',62,"+ scnt +"),");
+//					}
+//				}
+//			}
+//
+//		}
 		System.out.println();
 		System.out.println(count);
 
